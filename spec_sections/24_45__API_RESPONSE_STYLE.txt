@@ -1,0 +1,166 @@
+# 45. API RESPONSE STYLE
+
+
+
+Use predictable JSON.
+
+
+
+For paginated endpoints:
+
+
+
+```json
+
+{
+
+  "content": [],
+
+  "page": 0,
+
+  "size": 10,
+
+  "totalElements": 42,
+
+  "totalPages": 5,
+
+  "first": true,
+
+  "last": false
+
+}
+
+```
+
+
+
+Do not expose Spring `Page` directly if it creates an undesirable API contract.
+
+
+
+Create a tiny generic `PageResponse<T>` record.
+
+
+
+---
+
+
+
+# 46. DTO STYLE
+
+
+
+Use Java records where appropriate.
+
+
+
+Examples:
+
+
+
+```java
+
+public record LoginRequest(
+
+    @NotBlank @Email String email,
+
+    @NotBlank String password
+
+) {}
+
+```
+
+
+
+Keep DTOs intentionally small.
+
+
+
+Do not build unnecessary mapper frameworks.
+
+
+
+Manual mapping is acceptable where shorter and clearer.
+
+
+
+---
+
+
+
+# 47. SERVICE RESPONSIBILITY
+
+
+
+Controllers must remain thin.
+
+
+
+Example:
+
+
+
+```text
+
+Controller
+
+    ↓
+
+Service
+
+    ↓
+
+Repository
+
+    ↓
+
+MySQL
+
+```
+
+
+
+AI:
+
+
+
+```text
+
+Controller
+
+    ↓
+
+AiAnalysisService
+
+    ↓
+
+Configurable AI provider
+
+```
+
+
+
+Fit:
+
+
+
+```text
+
+Controller
+
+    ↓
+
+JobFitService
+
+    ↓
+
+Repositories + ResumeQualityService + TextSimilarityUtil
+
+```
+
+
+
+---
+
+
+

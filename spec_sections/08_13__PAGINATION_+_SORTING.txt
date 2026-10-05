@@ -1,0 +1,80 @@
+# 13. PAGINATION + SORTING
+
+
+
+Opportunity endpoint:
+
+
+
+```text
+
+GET /api/opportunities?page=0&size=10&sort=deadline,asc
+
+```
+
+
+
+Application endpoint:
+
+
+
+```text
+
+GET /api/applications?page=0&size=10&sort=createdAt,desc
+
+```
+
+
+
+Support filtering:
+
+
+
+```text
+
+type
+
+status
+
+roleFamily
+
+location
+
+search
+
+```
+
+
+
+Do not create separate endpoints for every filter.
+
+
+
+Use query parameters.
+
+
+
+Example:
+
+
+
+```text
+
+GET /api/opportunities?type=JOB&search=backend&page=0&size=10&sort=deadline,asc
+
+```
+
+
+
+Validate allowed sort fields.
+
+
+
+Do not blindly accept arbitrary property names.
+
+
+
+---
+
+
+

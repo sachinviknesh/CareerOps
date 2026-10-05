@@ -1,0 +1,46 @@
+# 54. AUTOMATED TESTS
+
+
+
+Add a small number of meaningful tests.
+
+
+
+At minimum:
+
+
+
+```text
+
+Authentication success
+
+Authentication failure
+
+Opportunity CRUD
+
+Application CRUD
+
+Job-fit calculation
+
+Validation failure
+
+```
+
+
+
+Do not create hundreds of tests.
+
+
+
+Use a test profile.
+
+
+
+The main demonstration should still use Swagger/Postman.
+
+
+
+---
+
+
+

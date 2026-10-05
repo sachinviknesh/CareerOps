@@ -1,0 +1,52 @@
+# 21. AI PROVIDER DESIGN
+
+
+
+Do NOT tightly couple the project to one AI company.
+
+
+
+Use a generic OpenAI-compatible HTTP interface.
+
+
+
+Configuration:
+
+
+
+```text
+
+AI_BASE_URL
+
+AI_API_KEY
+
+AI_MODEL
+
+```
+
+
+
+This allows:
+
+
+
+* local Ollama
+
+* hosted OpenAI-compatible provider
+
+* another compatible endpoint
+
+
+
+For local/offline AI experimentation, support Ollama through the same configurable interface.
+
+
+
+Do not require AI for project execution.
+
+
+
+---
+
+
+

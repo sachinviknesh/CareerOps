@@ -1,0 +1,178 @@
+# 15. OFFLINE RESUME QUALITY ANALYSIS
+
+
+
+Create:
+
+
+
+```text
+
+GET /api/candidates/me/resume-analysis
+
+```
+
+
+
+This must work without AI.
+
+
+
+It should inspect extracted resume text and provide useful checks.
+
+
+
+Check for:
+
+
+
+### Section presence
+
+
+
+Detect common sections such as:
+
+
+
+```text
+
+Summary/Profile
+
+Education
+
+Experience
+
+Projects
+
+Skills
+
+Certifications
+
+Achievements
+
+```
+
+
+
+Do not require every section.
+
+
+
+Report what exists and what is missing.
+
+
+
+---
+
+
+
+### Text extraction quality
+
+
+
+If the document extracted almost no text:
+
+
+
+```text
+
+Possible image-only or extraction-poor resume.
+
+```
+
+
+
+Do not claim certainty.
+
+
+
+---
+
+
+
+### Experience structure
+
+
+
+Check whether experience/project entries appear to be present.
+
+
+
+---
+
+
+
+### Quantified evidence
+
+
+
+Detect the presence of numbers/metrics in project or experience bullets.
+
+
+
+Example:
+
+
+
+```text
+
+20%
+
+30 users
+
+2 seconds
+
+50 requests
+
+```
+
+
+
+Do not invent metrics.
+
+
+
+---
+
+
+
+### Technical terminology
+
+
+
+Compare technologies found in the resume against the selected opportunity's description.
+
+
+
+---
+
+
+
+### Job-title alignment
+
+
+
+Compare the candidate's stated roles and previous role titles against the target opportunity title.
+
+
+
+---
+
+
+
+### Resume readability
+
+
+
+Check whether the extracted text contains a reasonable amount of meaningful content.
+
+
+
+Return explanatory findings instead of pretending this is an official ATS score.
+
+
+
+---
+
+
+

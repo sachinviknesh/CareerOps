@@ -1,0 +1,40 @@
+# 48. DATABASE SCHEMA
+
+
+
+Generate the database automatically through JPA for the classroom project.
+
+
+
+Tables should correspond approximately to:
+
+
+
+```text
+
+candidate
+
+opportunity
+
+skill
+
+application
+
+
+
+candidate_skill
+
+opportunity_skill
+
+```
+
+
+
+Do not create unnecessary tables.
+
+
+
+---
+
+
+

@@ -1,0 +1,60 @@
+# 56. ENTITY DIAGRAM
+
+
+
+Create an easy-to-read Mermaid ER diagram.
+
+
+
+Example structure:
+
+
+
+```text
+
+Candidate
+
+    |
+
+    | 1
+
+    |
+
+    | *
+
+Application
+
+    *
+
+    |
+
+    | 1
+
+Opportunity
+
+```
+
+
+
+and:
+
+
+
+```text
+
+Candidate *----* Skill
+
+Opportunity *----* Skill
+
+```
+
+
+
+Render this cleanly in the documentation.
+
+
+
+---
+
+
+

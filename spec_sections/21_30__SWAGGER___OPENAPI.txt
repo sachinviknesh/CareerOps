@@ -1,0 +1,76 @@
+# 30. SWAGGER / OPENAPI
+
+
+
+Use springdoc OpenAPI.
+
+
+
+Swagger UI:
+
+
+
+```text
+
+/swagger-ui.html
+
+```
+
+
+
+or the generated current route supported by the chosen springdoc version.
+
+
+
+Document:
+
+
+
+* Auth endpoints
+
+* Candidate endpoints
+
+* Opportunity endpoints
+
+* Skill endpoints
+
+* Application endpoints
+
+* Fit endpoint
+
+* AI endpoint
+
+
+
+Configure bearer JWT security in OpenAPI so the user can click:
+
+
+
+```text
+
+Authorize
+
+```
+
+
+
+and enter:
+
+
+
+```text
+
+Bearer <JWT>
+
+```
+
+
+
+Swagger must be sufficient to demonstrate the backend without Postman.
+
+
+
+---
+
+
+

@@ -1,0 +1,150 @@
+# 70. FINAL QUALITY GATE
+
+
+
+Before considering the project complete, verify all of the following:
+
+
+
+```text
+
+[ ] Spring Boot application starts
+
+[ ] MySQL connection works
+
+[ ] Exactly 4 primary JPA entities
+
+[ ] Repository layer exists
+
+[ ] Service layer exists
+
+[ ] Controller layer exists
+
+[ ] GET works
+
+[ ] POST works
+
+[ ] PUT works
+
+[ ] DELETE works
+
+[ ] Derived JPA queries work
+
+[ ] JPQL queries work
+
+[ ] Pagination works
+
+[ ] Sorting works
+
+[ ] JPA relationship works
+
+[ ] Validation works
+
+[ ] Global exception handling works
+
+[ ] Swagger UI works
+
+[ ] JWT registration works
+
+[ ] JWT login works
+
+[ ] Protected endpoints reject unauthenticated requests
+
+[ ] Logging works
+
+[ ] Resume PDF/DOCX extraction works
+
+[ ] Offline resume analysis works
+
+[ ] Offline job-fit works
+
+[ ] Skill comparison works
+
+[ ] Application tracking works
+
+[ ] Optional AI works when configured
+
+[ ] Application still works with AI disabled
+
+[ ] React frontend works
+
+[ ] Postman collection works
+
+[ ] README complete
+
+[ ] Entity diagram complete
+
+[ ] API documentation complete
+
+[ ] Testing documentation complete
+
+[ ] Screenshots captured
+
+```
+
+
+
+---
+
+
+
+# 71. FINAL PRINCIPLE
+
+
+
+Do NOT optimize for the largest feature set.
+
+
+
+Optimize for:
+
+
+
+```text
+
+Small codebase
+
+Clear architecture
+
+Real problem
+
+Explainable job fit
+
+Offline-first core
+
+Optional AI
+
+Professional UI
+
+Easy Swagger demonstration
+
+Easy Postman testing
+
+Easy viva explanation
+
+```
+
+
+
+The final project should feel like a **well-designed student product**, not a giant generated enterprise system.
+
+
+
+When a feature can be implemented in 20 lines instead of 100 lines, choose the 20-line solution.
+
+
+
+When a feature adds complexity without helping the assignment or the central product idea, do not build it.
+
+
+
+Start implementation now.
+
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-10-03T13:07:21+05:30.
+</ADDITIONAL_METADATA>
+<USER_SETTINGS_CHANGE>
+The user changed setting `Model Selection` from None to Claude Sonnet 4.6 (Thinking). No need to comment on this change if the user doesn't ask about it. If reporting what model you are, please use a human readable name instead of the exact string.
+</USER_SETTINGS_CHANGE>

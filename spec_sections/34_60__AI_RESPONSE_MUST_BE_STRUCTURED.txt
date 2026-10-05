@@ -1,0 +1,216 @@
+# 60. AI RESPONSE MUST BE STRUCTURED
+
+
+
+Do not return one giant paragraph.
+
+
+
+Return structured sections:
+
+
+
+```json
+
+{
+
+  "summary": "...",
+
+  "strengths": [],
+
+  "matchedSkills": [],
+
+  "missingSkills": [],
+
+  "evidenceGaps": [],
+
+  "resumeRecommendations": [],
+
+  "projectRecommendations": [],
+
+  "interviewFocus": [],
+
+  "nextActions": []
+
+}
+
+```
+
+
+
+---
+
+
+
+# 61. RESEARCH DOCUMENT
+
+
+
+The research document should summarize public recruiting material from:
+
+
+
+```text
+
+Microsoft Careers
+
+Amazon Jobs
+
+NVIDIA Careers
+
+Microsoft university recruiter/interview content
+
+Other authoritative company recruiting material discovered during implementation
+
+```
+
+
+
+Use current official sources where available.
+
+
+
+Do not copy long passages.
+
+
+
+Summarize the useful principles.
+
+
+
+Keep a source title, date if available, and source link.
+
+
+
+---
+
+
+
+# 62. IMPORTANT DISTINCTION ABOUT "MNC STANDARDS"
+
+
+
+The application must use language such as:
+
+
+
+```text
+
+Public hiring guidance
+
+Evidence-based resume practices
+
+Public recruiter/interview guidance
+
+Role-alignment checks
+
+```
+
+
+
+Never label the output:
+
+
+
+```text
+
+Official Microsoft score
+
+Official Amazon score
+
+Official Google ATS score
+
+Official NVIDIA hiring score
+
+```
+
+
+
+because the application does not have access to proprietary internal systems.
+
+
+
+---
+
+
+
+# 63. PROFESSIONAL UX DETAILS
+
+
+
+Use:
+
+
+
+* clear page titles
+
+* small metadata text
+
+* consistent action placement
+
+* one primary action per screen
+
+* secondary actions visually quieter
+
+* tables for structured information
+
+* drawers/modals only where useful
+
+* clear empty states
+
+* confirmation before destructive deletes
+
+* visible validation messages
+
+* loading states
+
+* API error messages
+
+* disabled button states during requests
+
+
+
+Do not create excessive animations.
+
+
+
+Use subtle transitions only where helpful.
+
+
+
+---
+
+
+
+# 64. ACCESSIBILITY
+
+
+
+Use:
+
+
+
+```text
+
+semantic buttons
+
+labels
+
+keyboard focus
+
+sufficient contrast
+
+aria-label where icons need labels
+
+```
+
+
+
+Material Symbols must not be the only information conveyed by an action.
+
+
+
+---
+
+
+

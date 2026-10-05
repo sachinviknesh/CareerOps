@@ -1,0 +1,826 @@
+# 32. FRONTEND PAGES
+
+
+
+Only build these screens:
+
+
+
+```text
+
+/login
+
+/register
+
+/dashboard
+
+/opportunities
+
+/opportunities/:id
+
+/applications
+
+/profile
+
+/resume
+
+```
+
+
+
+No unnecessary pages.
+
+
+
+---
+
+
+
+# 33. DASHBOARD
+
+
+
+Make the dashboard useful, not decorative.
+
+
+
+Show compact summaries:
+
+
+
+```text
+
+To Apply
+
+Applied
+
+In Progress
+
+Interview
+
+Selected
+
+Closing Soon
+
+```
+
+
+
+Also show:
+
+
+
+```text
+
+Upcoming deadlines
+
+Recent applications
+
+Recent opportunities
+
+```
+
+
+
+Do not use giant decorative metric cards.
+
+
+
+Use a professional operational layout.
+
+
+
+---
+
+
+
+# 34. OPPORTUNITIES SCREEN
+
+
+
+Use a data table.
+
+
+
+Columns:
+
+
+
+```text
+
+Opportunity
+
+Organization
+
+Type
+
+Role
+
+Deadline
+
+Status
+
+Actions
+
+```
+
+
+
+Filters:
+
+
+
+```text
+
+Search
+
+Type
+
+Role Family
+
+Location
+
+```
+
+
+
+Support:
+
+
+
+```text
+
+Pagination
+
+Sorting
+
+```
+
+
+
+Each row should have:
+
+
+
+```text
+
+View
+
+Edit
+
+Delete
+
+```
+
+
+
+---
+
+
+
+# 35. OPPORTUNITY DETAIL SCREEN
+
+
+
+Show:
+
+
+
+```text
+
+Title
+
+Organization
+
+Type
+
+Role Family
+
+Location
+
+Work Mode
+
+Deadline
+
+Description
+
+Required Skills
+
+Source URL
+
+```
+
+
+
+Main action area:
+
+
+
+```text
+
+Analyze Fit
+
+AI Review
+
+Add to Tracker
+
+```
+
+
+
+Fit panel:
+
+
+
+```text
+
+Fit Score
+
+Confidence
+
+Matched Skills
+
+Missing Skills
+
+Evidence
+
+Resume Signals
+
+Next Actions
+
+```
+
+
+
+---
+
+
+
+# 36. APPLICATIONS SCREEN
+
+
+
+Prefer a compact table with status filters.
+
+
+
+Example:
+
+
+
+```text
+
+Opportunity
+
+Type
+
+Organization
+
+Status
+
+Applied
+
+Next Action
+
+Fit
+
+```
+
+
+
+Allow:
+
+
+
+```text
+
+Change Status
+
+Edit Notes
+
+Delete
+
+```
+
+
+
+Do not build a complicated drag-and-drop Kanban unless it can be implemented with very little extra code.
+
+
+
+---
+
+
+
+# 37. PROFILE / RESUME SCREEN
+
+
+
+Show:
+
+
+
+```text
+
+Candidate Information
+
+Target Roles
+
+Education
+
+Experience
+
+Skills
+
+Resume Upload
+
+Resume Analysis
+
+```
+
+
+
+Resume analysis should have categories:
+
+
+
+```text
+
+Strengths
+
+Missing Information
+
+Technical Coverage
+
+Evidence Signals
+
+Potential Formatting/Extraction Issues
+
+```
+
+
+
+---
+
+
+
+# 38. VISUAL DESIGN
+
+
+
+The application should feel like a serious professional productivity tool.
+
+
+
+Design direction:
+
+
+
+**Editorial enterprise / modern operations console**
+
+
+
+NOT:
+
+
+
+* generic AI dashboard
+
+* futuristic neon
+
+* gradient-heavy SaaS
+
+* glass cards
+
+* cartoon UI
+
+* excessive rounded cards
+
+
+
+Use:
+
+
+
+* warm neutral background
+
+* white/off-white surfaces
+
+* dark charcoal text
+
+* one restrained accent color
+
+* subtle borders
+
+* compact tables
+
+* clear hierarchy
+
+* generous but consistent spacing
+
+* strong typography
+
+* restrained status colors
+
+
+
+---
+
+
+
+# 39. TYPOGRAPHY
+
+
+
+Use Google Fonts.
+
+
+
+Primary font:
+
+
+
+**Instrument Sans**
+
+
+
+Secondary/technical font:
+
+
+
+**IBM Plex Mono**
+
+
+
+Use Google Material Symbols from:
+
+
+
+**Google Fonts Material Symbols / Icons**
+
+
+
+Prefer:
+
+
+
+```text
+
+Material Symbols Outlined
+
+```
+
+
+
+Use icon names such as appropriate Material Symbols for:
+
+
+
+```text
+
+dashboard
+
+work
+
+event
+
+description
+
+person
+
+search
+
+filter_list
+
+sort
+
+calendar_today
+
+edit
+
+delete
+
+upload_file
+
+analytics
+
+check_circle
+
+warning
+
+arrow_back
+
+open_in_new
+
+```
+
+
+
+Do not use emoji as UI icons.
+
+
+
+Do not use random icon libraries when Material Symbols is sufficient.
+
+
+
+---
+
+
+
+# 40. SPACING SYSTEM
+
+
+
+Use one spacing scale.
+
+
+
+Example token approach:
+
+
+
+```text
+
+space-1
+
+space-2
+
+space-3
+
+space-4
+
+space-5
+
+space-6
+
+```
+
+
+
+Base it on a consistent 4/8-point rhythm.
+
+
+
+Use the tokens everywhere.
+
+
+
+Do not create:
+
+
+
+```text
+
+margin-left: 13px
+
+margin-top: 27px
+
+padding: 19px
+
+```
+
+
+
+in individual components.
+
+
+
+---
+
+
+
+# 41. LAYOUT
+
+
+
+Desktop:
+
+
+
+```text
+
+Left navigation
+
+        |
+
+        |---- Main content
+
+```
+
+
+
+Keep content within a readable maximum width.
+
+
+
+Suggested structure:
+
+
+
+```text
+
+┌──────────────────────────────────────────────────────────┐
+
+│ Top bar                                                  │
+
+├───────────────┬──────────────────────────────────────────┤
+
+│               │                                          │
+
+│ Navigation    │ Main Content                             │
+
+│               │                                          │
+
+│               │                                          │
+
+└───────────────┴──────────────────────────────────────────┘
+
+```
+
+
+
+Use a compact navigation rail/sidebar.
+
+
+
+On smaller widths, collapse navigation.
+
+
+
+---
+
+
+
+# 42. FRONTEND DATA HANDLING
+
+
+
+Use a small API client:
+
+
+
+```text
+
+src/api/client.js
+
+```
+
+
+
+It should handle:
+
+
+
+```text
+
+base URL
+
+JWT
+
+JSON
+
+errors
+
+```
+
+
+
+Base URL must come from:
+
+
+
+```text
+
+VITE_API_BASE_URL
+
+```
+
+
+
+Do not write:
+
+
+
+```text
+
+http://localhost:8080
+
+```
+
+
+
+inside components.
+
+
+
+---
+
+
+
+# 43. FRONTEND STATE
+
+
+
+Do not add Redux.
+
+
+
+Use React state/hooks.
+
+
+
+Only create shared helpers where necessary.
+
+
+
+Avoid overengineering.
+
+
+
+---
+
+
+
+# 44. FRONTEND COMPONENT STRUCTURE
+
+
+
+Keep it small.
+
+
+
+```text
+
+src/
+
+├── components/
+
+│   ├── AppShell
+
+│   ├── DataTable
+
+│   ├── StatusBadge
+
+│   ├── Pagination
+
+│   ├── SearchBar
+
+│   ├── OpportunityCard
+
+│   ├── FitPanel
+
+│   └── EmptyState
+
+│
+
+├── pages/
+
+│   ├── Login
+
+│   ├── Register
+
+│   ├── Dashboard
+
+│   ├── Opportunities
+
+│   ├── OpportunityDetail
+
+│   ├── Applications
+
+│   ├── Profile
+
+│   └── Resume
+
+│
+
+├── api/
+
+│   └── client.js
+
+│
+
+├── styles/
+
+│   ├── tokens.css
+
+│   ├── global.css
+
+│   └── components.css
+
+│
+
+└── App.jsx
+
+```
+
+
+
+Do not make dozens of components.
+
+
+
+---
+
+
+

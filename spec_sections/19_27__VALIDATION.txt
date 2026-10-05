@@ -1,0 +1,74 @@
+# 27. VALIDATION
+
+
+
+Use Jakarta Bean Validation.
+
+
+
+Examples:
+
+
+
+```java
+
+@NotBlank
+
+private String title;
+
+
+
+@NotBlank
+
+@Email
+
+private String email;
+
+
+
+@NotNull
+
+private OpportunityType type;
+
+
+
+@Size(max = 10000)
+
+private String description;
+
+```
+
+
+
+Validate:
+
+
+
+* email
+
+* password
+
+* title
+
+* type
+
+* application status
+
+* dates
+
+* description length
+
+* file type
+
+* file size
+
+
+
+Do not duplicate validation manually in controllers.
+
+
+
+---
+
+
+

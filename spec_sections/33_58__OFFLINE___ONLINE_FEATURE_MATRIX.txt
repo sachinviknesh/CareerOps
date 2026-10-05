@@ -1,0 +1,128 @@
+# 58. OFFLINE / ONLINE FEATURE MATRIX
+
+
+
+Include this in README:
+
+
+
+```text
+
+Feature                          Offline     AI
+
+------------------------------------------------
+
+Authentication                   YES         NO
+
+CRUD                             YES         NO
+
+Pagination                       YES         NO
+
+Sorting                          YES         NO
+
+Resume extraction               YES         NO
+
+Resume quality checks            YES         NO
+
+Skill comparison                YES         NO
+
+Job-fit calculation             YES         NO
+
+Text similarity                 YES         NO
+
+AI resume review                NO          YES
+
+AI job explanation              NO          YES
+
+AI missing-skill explanation    NO          YES
+
+AI interview preparation       NO          YES
+
+```
+
+
+
+This clearly demonstrates that AI is an enhancement, not a dependency.
+
+
+
+---
+
+
+
+# 59. AI PROMPT SAFETY / QUALITY
+
+
+
+Use one central AI system prompt.
+
+
+
+It should say approximately:
+
+
+
+```text
+
+You are a career analysis assistant.
+
+
+
+Analyze only the information provided.
+
+
+
+Never invent:
+
+- skills
+
+- experience
+
+- projects
+
+- employers
+
+- certifications
+
+- metrics
+
+- achievements
+
+
+
+Distinguish between:
+
+- direct evidence
+
+- reasonable inference
+
+- missing information
+
+
+
+Use the opportunity description as the primary role-specific context.
+
+
+
+Give practical recommendations.
+
+
+
+Do not claim that your analysis guarantees hiring, ATS success, interviews, or selection.
+
+
+
+Return valid JSON only.
+
+```
+
+
+
+Keep the prompt in a resource file, not scattered across Java classes.
+
+
+
+---
+
+
+

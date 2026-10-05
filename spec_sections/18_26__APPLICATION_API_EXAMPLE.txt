@@ -1,0 +1,46 @@
+# 26. APPLICATION API EXAMPLE
+
+
+
+Create:
+
+
+
+```http
+
+POST /api/applications
+
+Authorization: Bearer <token>
+
+Content-Type: application/json
+
+```
+
+
+
+Request:
+
+
+
+```json
+
+{
+
+  "opportunityId": 1,
+
+  "status": "TO_APPLY",
+
+  "nextActionDate": "2026-10-10",
+
+  "notes": "Tailor resume before applying"
+
+}
+
+```
+
+
+
+---
+
+
+

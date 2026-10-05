@@ -1,0 +1,136 @@
+# 18. FIT RESULT
+
+
+
+Return something similar to:
+
+
+
+```json
+
+{
+
+  "score": 78,
+
+  "confidence": "MEDIUM",
+
+  "matchedSkills": [],
+
+  "missingSkills": [],
+
+  "evidenceFound": [],
+
+  "eligibilityChecks": [],
+
+  "resumeSignals": [],
+
+  "nextActions": []
+
+}
+
+```
+
+
+
+The exact score weighting must come from configuration.
+
+
+
+Do not hardcode percentages inside Java.
+
+
+
+For example:
+
+
+
+```text
+
+FIT_SKILL_WEIGHT
+
+FIT_RESPONSIBILITY_WEIGHT
+
+FIT_EXPERIENCE_WEIGHT
+
+FIT_RESUME_WEIGHT
+
+```
+
+
+
+All weights must total 100%.
+
+
+
+Validate this configuration at startup.
+
+
+
+---
+
+
+
+# 19. DO NOT PRESENT FIT AS A GUARANTEE
+
+
+
+The UI must never say:
+
+
+
+```text
+
+You will get the job.
+
+```
+
+
+
+Do not say:
+
+
+
+```text
+
+This guarantees ATS success.
+
+```
+
+
+
+Instead use:
+
+
+
+```text
+
+Estimated fit
+
+Evidence
+
+Matched requirements
+
+Missing requirements
+
+Areas to improve
+
+```
+
+
+
+Add a small note:
+
+
+
+```text
+
+Fit is an explanatory heuristic based on the information available in your profile and the opportunity description. It is not a hiring decision or guarantee.
+
+```
+
+
+
+---
+
+
+

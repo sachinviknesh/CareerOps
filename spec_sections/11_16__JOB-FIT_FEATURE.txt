@@ -1,0 +1,56 @@
+# 16. JOB-FIT FEATURE
+
+
+
+This is the main differentiating feature.
+
+
+
+Endpoint:
+
+
+
+```text
+
+GET /api/opportunities/{id}/fit
+
+```
+
+
+
+The service compares:
+
+
+
+```text
+
+Candidate profile
+
+Candidate skills
+
+Resume text
+
+Target role
+
+Opportunity description
+
+Opportunity required skills
+
+Experience requirement where identifiable
+
+Education requirement where identifiable
+
+Location/work mode where available
+
+```
+
+
+
+The result must be explainable.
+
+
+
+---
+
+
+

@@ -1,0 +1,78 @@
+# 12. JPQL QUERIES
+
+
+
+Add meaningful JPQL.
+
+
+
+Example:
+
+
+
+```java
+
+@Query("""
+
+    select distinct o
+
+    from Opportunity o
+
+    join o.requiredSkills s
+
+    where lower(s.name) = lower(:skill)
+
+""")
+
+Page<Opportunity> findByRequiredSkill(
+
+    String skill,
+
+    Pageable pageable
+
+);
+
+```
+
+
+
+Another useful query:
+
+
+
+```java
+
+@Query("""
+
+    select a
+
+    from Application a
+
+    where a.candidate.id = :candidateId
+
+      and a.opportunity.type = :type
+
+""")
+
+Page<Application> findApplicationsByType(
+
+    Long candidateId,
+
+    OpportunityType type,
+
+    Pageable pageable
+
+);
+
+```
+
+
+
+Add at least 2 clearly demonstrable JPQL queries.
+
+
+
+---
+
+
+

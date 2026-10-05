@@ -1,0 +1,60 @@
+# 49. SECURITY RULES
+
+
+
+Public:
+
+
+
+```text
+
+POST /api/auth/register
+
+POST /api/auth/login
+
+```
+
+
+
+Protected:
+
+
+
+```text
+
+everything else
+
+```
+
+
+
+A candidate should only be able to access their own:
+
+
+
+```text
+
+profile
+
+resume
+
+skills
+
+applications
+
+```
+
+
+
+An opportunity may be publicly readable if desired, but creation/edit/delete should require authentication.
+
+
+
+Since this is a small student project, keep authorization simple.
+
+
+
+---
+
+
+

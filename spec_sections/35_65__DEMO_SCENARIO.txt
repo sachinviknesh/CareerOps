@@ -1,0 +1,402 @@
+# 65. DEMO SCENARIO
+
+
+
+Create the project so a 5–8 minute college demonstration is easy.
+
+
+
+Recommended demo:
+
+
+
+### Step 1
+
+
+
+Register.
+
+
+
+### Step 2
+
+
+
+Login and obtain JWT.
+
+
+
+### Step 3
+
+
+
+Create a few skills through API.
+
+
+
+### Step 4
+
+
+
+Upload a resume.
+
+
+
+### Step 5
+
+
+
+Show offline resume analysis.
+
+
+
+### Step 6
+
+
+
+Create an opportunity:
+
+
+
+```text
+
+Backend Software Engineer Intern
+
+```
+
+
+
+with a realistic description entered through Swagger/Postman.
+
+
+
+### Step 7
+
+
+
+Associate required skills.
+
+
+
+### Step 8
+
+
+
+Show:
+
+
+
+```text
+
+GET /api/opportunities
+
+```
+
+
+
+with pagination and sorting.
+
+
+
+### Step 9
+
+
+
+Open the opportunity.
+
+
+
+### Step 10
+
+
+
+Run:
+
+
+
+```text
+
+GET /api/opportunities/{id}/fit
+
+```
+
+
+
+Show:
+
+
+
+```text
+
+matched skills
+
+missing skills
+
+experience result
+
+resume evidence
+
+fit score
+
+next actions
+
+```
+
+
+
+### Step 11
+
+
+
+Create Application:
+
+
+
+```text
+
+TO_APPLY
+
+```
+
+
+
+### Step 12
+
+
+
+Change to:
+
+
+
+```text
+
+APPLIED
+
+```
+
+
+
+### Step 13
+
+
+
+Optionally run:
+
+
+
+```text
+
+POST /api/opportunities/{id}/ai-review
+
+```
+
+
+
+Show AI recommendations.
+
+
+
+### Step 14
+
+
+
+Open Swagger UI and explain:
+
+
+
+```text
+
+Controller
+
+Service
+
+Repository
+
+JPA
+
+MySQL
+
+JWT
+
+Validation
+
+Exception handling
+
+```
+
+
+
+This sequence should visibly cover the assignment requirements.
+
+
+
+---
+
+
+
+# 66. TEAM OF 3–4 STUDENTS
+
+
+
+Design the project so contributions are easy to demonstrate.
+
+
+
+### Member 1 — Backend/Core
+
+
+
+Responsible for:
+
+
+
+```text
+
+Entity
+
+Repository
+
+CRUD
+
+JPA
+
+MySQL
+
+```
+
+
+
+### Member 2 — Security/API
+
+
+
+Responsible for:
+
+
+
+```text
+
+JWT
+
+Validation
+
+Exception handling
+
+Swagger
+
+Logging
+
+```
+
+
+
+### Member 3 — Job-Fit/Resume
+
+
+
+Responsible for:
+
+
+
+```text
+
+Resume extraction
+
+Resume quality
+
+Skill comparison
+
+Offline fit algorithm
+
+```
+
+
+
+### Member 4 — Frontend/AI/Testing
+
+
+
+Responsible for:
+
+
+
+```text
+
+React UI
+
+AI integration
+
+Postman
+
+Testing
+
+Screenshots
+
+Documentation
+
+```
+
+
+
+Each member should make visible Git commits.
+
+
+
+Do not fabricate contribution history.
+
+
+
+---
+
+
+
+# 67. GIT
+
+
+
+Initialize Git immediately.
+
+
+
+Use meaningful commits:
+
+
+
+```text
+
+init project structure
+
+add entities and repositories
+
+add opportunity CRUD
+
+add application CRUD
+
+add JWT authentication
+
+add validation and exception handling
+
+add swagger documentation
+
+add resume extraction
+
+add offline job fit
+
+add frontend shell
+
+add AI review
+
+add testing and documentation
+
+```
+
+
+
+Do not create one giant final commit.
+
+
+
+---
+
+
+

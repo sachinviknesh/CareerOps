@@ -1,0 +1,70 @@
+# 14. RESUME FEATURE — OFFLINE FIRST
+
+
+
+Add:
+
+
+
+```text
+
+POST /api/candidates/me/resume
+
+Content-Type: multipart/form-data
+
+```
+
+
+
+Accept:
+
+
+
+```text
+
+PDF
+
+DOCX
+
+```
+
+
+
+Use Apache Tika to extract text locally.
+
+
+
+Do NOT upload the resume to an external AI service merely to extract text.
+
+
+
+Store:
+
+
+
+```text
+
+resumeFileName
+
+resumeText
+
+```
+
+
+
+inside Candidate.
+
+
+
+The original resume file does not need permanent storage.
+
+
+
+This keeps the implementation simple.
+
+
+
+---
+
+
+

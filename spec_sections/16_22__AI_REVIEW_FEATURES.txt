@@ -1,0 +1,336 @@
+# 22. AI REVIEW FEATURES
+
+
+
+The AI should receive:
+
+
+
+```text
+
+candidate profile
+
+resume text
+
+candidate skills
+
+opportunity title
+
+opportunity description
+
+required skills
+
+offline fit result
+
+resume quality result
+
+```
+
+
+
+The AI should return structured JSON.
+
+
+
+Required sections:
+
+
+
+```text
+
+roleSummary
+
+strongEvidence
+
+missingSkills
+
+evidenceGaps
+
+resumeImprovements
+
+projectSuggestions
+
+skillsToStrengthen
+
+interviewFocus
+
+behavioralTopics
+
+technicalTopics
+
+recommendedNextActions
+
+```
+
+
+
+Do NOT make the AI invent:
+
+
+
+* experience
+
+* projects
+
+* certifications
+
+* employers
+
+* skills
+
+* achievements
+
+* metrics
+
+
+
+Prompt the model explicitly:
+
+
+
+```text
+
+Use only evidence available in the candidate data.
+
+If information is missing, say it is missing.
+
+Do not fabricate achievements or experience.
+
+```
+
+
+
+---
+
+
+
+# 23. RESEARCH-BASED RESUME GUIDANCE
+
+
+
+Create:
+
+
+
+```text
+
+docs/research/hiring-guidance.md
+
+```
+
+
+
+Do not present this as proprietary MNC hiring knowledge.
+
+
+
+Describe it as:
+
+
+
+**Public recruiting guidance and recruiter/interview material used to inform the application's analysis.**
+
+
+
+The application should incorporate the following evidence-based themes:
+
+
+
+### Role alignment
+
+
+
+The resume and candidate profile should clearly correspond to the target role.
+
+
+
+### Skills
+
+
+
+Relevant technical skills should be clearly represented.
+
+
+
+### Experience and projects
+
+
+
+Projects should demonstrate actual technical work rather than just listing technologies.
+
+
+
+### Measurable evidence
+
+
+
+Where truthful, achievements should describe measurable outcomes.
+
+
+
+### Standard terminology
+
+
+
+Use generally understood industry terminology.
+
+
+
+### Parser-friendly resume
+
+
+
+Prefer clean, text-based DOCX/PDF structure.
+
+
+
+Avoid relying on images to communicate important experience or skills.
+
+
+
+### Clear job titles
+
+
+
+Use descriptive industry-understandable titles.
+
+
+
+### Reverse chronological experience
+
+
+
+Use conventional experience ordering.
+
+
+
+### Technical + behavioral preparation
+
+
+
+Technical roles can involve both technical assessment and behavioral evaluation.
+
+
+
+These ideas are supported by public Microsoft, Amazon, NVIDIA and recruiter material.
+
+
+
+Do not claim:
+
+
+
+```text
+
+Google uses exactly this score.
+
+Amazon uses exactly this score.
+
+Microsoft ATS gives this score.
+
+NVIDIA uses this internal formula.
+
+```
+
+
+
+Those claims are not justified.
+
+
+
+---
+
+
+
+# 24. ROLE FAMILY COVERAGE
+
+
+
+The application should support the broad digital/technology ecosystem without creating dozens of entities.
+
+
+
+The job-fit engine should work with opportunities in areas such as:
+
+
+
+```text
+
+Software Engineering
+
+Backend
+
+Frontend
+
+Full Stack
+
+Mobile
+
+Cloud
+
+DevOps
+
+SRE
+
+Platform Engineering
+
+Data Engineering
+
+Data Science
+
+AI
+
+Machine Learning
+
+NLP
+
+Cybersecurity
+
+QA
+
+SDET
+
+Automation
+
+Product Engineering
+
+Technical Support
+
+Solutions Engineering
+
+Implementation
+
+IT Services
+
+Service-Based Engineering
+
+Product-Based Engineering
+
+Infrastructure
+
+Database
+
+Embedded
+
+Other
+
+```
+
+
+
+These are not database-enforced hardcoded categories.
+
+
+
+They are examples in documentation only.
+
+
+
+The actual opportunity can contain free-text `roleFamily`.
+
+
+
+---
+
+
+

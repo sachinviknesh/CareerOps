@@ -1,0 +1,104 @@
+# 10. CRUD REQUIREMENTS
+
+
+
+Every major domain must have proper CRUD.
+
+
+
+## Candidate
+
+
+
+```text
+
+GET    /api/candidates/me
+
+PUT    /api/candidates/me
+
+DELETE /api/candidates/me
+
+```
+
+
+
+Registration provides CREATE.
+
+
+
+---
+
+
+
+## Opportunity
+
+
+
+```text
+
+POST   /api/opportunities
+
+GET    /api/opportunities
+
+GET    /api/opportunities/{id}
+
+PUT    /api/opportunities/{id}
+
+DELETE /api/opportunities/{id}
+
+```
+
+
+
+---
+
+
+
+## Skill
+
+
+
+```text
+
+POST   /api/skills
+
+GET    /api/skills
+
+GET    /api/skills/{id}
+
+PUT    /api/skills/{id}
+
+DELETE /api/skills/{id}
+
+```
+
+
+
+---
+
+
+
+## Application
+
+
+
+```text
+
+POST   /api/applications
+
+GET    /api/applications
+
+GET    /api/applications/{id}
+
+PUT    /api/applications/{id}
+
+DELETE /api/applications/{id}
+
+```
+
+
+
+---
+
+
+

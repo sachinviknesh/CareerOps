@@ -1,0 +1,116 @@
+# 50. DUPLICATE APPLICATION RULE
+
+
+
+Do not allow the same candidate to create multiple Application records for the same Opportunity unless intentionally updating the existing one.
+
+
+
+Use:
+
+
+
+```text
+
+unique candidate + opportunity
+
+```
+
+
+
+constraint.
+
+
+
+Handle duplicate insertion using proper exception handling.
+
+
+
+---
+
+
+
+# 51. DEADLINE LOGIC
+
+
+
+Do not build notifications.
+
+
+
+Just provide:
+
+
+
+```text
+
+deadline
+
+nextActionDate
+
+```
+
+
+
+and a lightweight endpoint or query for:
+
+
+
+```text
+
+closing soon
+
+```
+
+
+
+Example:
+
+
+
+```text
+
+GET /api/opportunities/closing-soon
+
+```
+
+
+
+However, prefer a JPQL/derived query instead of complex scheduler logic.
+
+
+
+---
+
+
+
+# 52. NO BACKGROUND JOB SYSTEM
+
+
+
+Do not add:
+
+
+
+```text
+
+Quartz
+
+Scheduler
+
+Kafka
+
+Message queues
+
+```
+
+
+
+The project does not need them.
+
+
+
+---
+
+
+

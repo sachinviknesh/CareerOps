@@ -1,0 +1,64 @@
+# 25. APPLICATION TRACKER FLOW
+
+
+
+Example workflow:
+
+
+
+```text
+
+Find Opportunity
+
+       ↓
+
+Save Opportunity
+
+       ↓
+
+Status = TO_APPLY
+
+       ↓
+
+Compare Fit
+
+       ↓
+
+Review Missing Skills
+
+       ↓
+
+Review Resume
+
+       ↓
+
+Apply
+
+       ↓
+
+Status = APPLIED
+
+       ↓
+
+Assessment
+
+       ↓
+
+Interview
+
+       ↓
+
+Selected / Rejected / Withdrawn
+
+```
+
+
+
+The user should be able to change status through PUT.
+
+
+
+---
+
+
+

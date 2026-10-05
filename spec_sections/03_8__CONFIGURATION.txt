@@ -1,0 +1,116 @@
+# 8. CONFIGURATION
+
+
+
+Use one clean `application.yml`.
+
+
+
+All environment-sensitive values must be externalized.
+
+
+
+Example structure:
+
+
+
+```yaml
+
+spring:
+
+  datasource:
+
+    url: ${DB_URL}
+
+    username: ${DB_USERNAME}
+
+    password: ${DB_PASSWORD}
+
+
+
+  jpa:
+
+    hibernate:
+
+      ddl-auto: update
+
+    open-in-view: false
+
+
+
+  servlet:
+
+    multipart:
+
+      max-file-size: ${MAX_FILE_SIZE}
+
+      max-request-size: ${MAX_FILE_SIZE}
+
+
+
+server:
+
+  port: ${SERVER_PORT:8080}
+
+
+
+app:
+
+  jwt:
+
+    secret: ${JWT_SECRET}
+
+    expiration-minutes: ${JWT_EXPIRATION_MINUTES:120}
+
+
+
+  fit:
+
+    skill-weight: ${FIT_SKILL_WEIGHT}
+
+    responsibility-weight: ${FIT_RESPONSIBILITY_WEIGHT}
+
+    experience-weight: ${FIT_EXPERIENCE_WEIGHT}
+
+    resume-weight: ${FIT_RESUME_WEIGHT}
+
+
+
+ai:
+
+  enabled: ${AI_ENABLED:false}
+
+  base-url: ${AI_BASE_URL:}
+
+  api-key: ${AI_API_KEY:}
+
+  model: ${AI_MODEL:}
+
+```
+
+
+
+Do not hardcode credentials.
+
+
+
+Create:
+
+
+
+```text
+
+.env.example
+
+```
+
+
+
+with placeholder names only.
+
+
+
+---
+
+
+

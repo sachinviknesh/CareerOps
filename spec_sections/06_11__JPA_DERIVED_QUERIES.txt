@@ -1,0 +1,68 @@
+# 11. JPA DERIVED QUERIES
+
+
+
+Implement real derived queries.
+
+
+
+Examples:
+
+
+
+```java
+
+Optional<Candidate> findByEmailIgnoreCase(String email);
+
+
+
+boolean existsByEmailIgnoreCase(String email);
+
+
+
+Page<Opportunity> findByType(
+
+    OpportunityType type,
+
+    Pageable pageable
+
+);
+
+
+
+Page<Opportunity> findByTitleContainingIgnoreCase(
+
+    String title,
+
+    Pageable pageable
+
+);
+
+
+
+Page<Application> findByCandidateIdAndStatus(
+
+    Long candidateId,
+
+    ApplicationStatus status,
+
+    Pageable pageable
+
+);
+
+
+
+Optional<Skill> findByNameIgnoreCase(String name);
+
+```
+
+
+
+Use these through services.
+
+
+
+---
+
+
+

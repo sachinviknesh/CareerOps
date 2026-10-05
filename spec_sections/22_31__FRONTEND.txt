@@ -1,0 +1,42 @@
+# 31. FRONTEND
+
+
+
+Build a very small React frontend.
+
+
+
+Use:
+
+
+
+```text
+
+React
+
+Vite
+
+Fetch API
+
+CSS
+
+```
+
+
+
+Do not introduce a large UI framework unless it clearly reduces implementation complexity.
+
+
+
+The backend remains the primary assignment.
+
+
+
+The frontend is mainly for professional presentation and demonstration.
+
+
+
+---
+
+
+

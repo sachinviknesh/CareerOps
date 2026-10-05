@@ -1,0 +1,140 @@
+# 28. EXCEPTION HANDLING
+
+
+
+Create:
+
+
+
+```text
+
+GlobalExceptionHandler
+
+```
+
+
+
+Handle:
+
+
+
+```text
+
+ResourceNotFoundException
+
+BadRequestException
+
+MethodArgumentNotValidException
+
+AccessDeniedException
+
+AuthenticationException
+
+DataIntegrityViolationException
+
+```
+
+
+
+Return one consistent error format:
+
+
+
+```json
+
+{
+
+  "timestamp": "2026-10-03T12:00:00",
+
+  "status": 400,
+
+  "error": "Bad Request",
+
+  "message": "Opportunity not found",
+
+  "path": "/api/opportunities/99"
+
+}
+
+```
+
+
+
+Do not expose stack traces.
+
+
+
+---
+
+
+
+# 29. LOGGING
+
+
+
+Use SLF4J.
+
+
+
+Log important application events:
+
+
+
+```text
+
+registration
+
+login success/failure
+
+opportunity creation
+
+opportunity update
+
+application creation
+
+status change
+
+resume upload
+
+fit analysis
+
+AI request success/failure
+
+```
+
+
+
+Do NOT log:
+
+
+
+```text
+
+password
+
+JWT
+
+AI API key
+
+resume full text
+
+```
+
+
+
+Use INFO for normal business operations.
+
+
+
+Use WARN for rejected/invalid operations.
+
+
+
+Use ERROR for unexpected failures.
+
+
+
+---
+
+
+

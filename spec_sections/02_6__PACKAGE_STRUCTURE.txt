@@ -1,0 +1,254 @@
+# 6. PACKAGE STRUCTURE
+
+
+
+Use a normal layered Spring architecture because this is an academic REST API project.
+
+
+
+```text
+
+careerops/
+
+│
+
+├── CareerOpsApplication.java
+
+│
+
+├── config/
+
+│   ├── SecurityConfig.java
+
+│   └── OpenApiConfig.java
+
+│
+
+├── controller/
+
+│   ├── AuthController.java
+
+│   ├── CandidateController.java
+
+│   ├── OpportunityController.java
+
+│   ├── SkillController.java
+
+│   ├── ApplicationController.java
+
+│   └── JobFitController.java
+
+│
+
+├── service/
+
+│   ├── AuthService.java
+
+│   ├── CandidateService.java
+
+│   ├── OpportunityService.java
+
+│   ├── SkillService.java
+
+│   ├── ApplicationService.java
+
+│   ├── JobFitService.java
+
+│   ├── ResumeParserService.java
+
+│   ├── ResumeQualityService.java
+
+│   └── AiAnalysisService.java
+
+│
+
+├── repository/
+
+│   ├── CandidateRepository.java
+
+│   ├── OpportunityRepository.java
+
+│   ├── SkillRepository.java
+
+│   └── ApplicationRepository.java
+
+│
+
+├── entity/
+
+│   ├── Candidate.java
+
+│   ├── Opportunity.java
+
+│   ├── Skill.java
+
+│   └── Application.java
+
+│
+
+├── dto/
+
+│   ├── auth/
+
+│   ├── candidate/
+
+│   ├── opportunity/
+
+│   ├── skill/
+
+│   ├── application/
+
+│   └── fit/
+
+│
+
+├── security/
+
+│   ├── JwtService.java
+
+│   └── JwtAuthenticationFilter.java
+
+│
+
+├── exception/
+
+│   ├── ResourceNotFoundException.java
+
+│   ├── BadRequestException.java
+
+│   └── GlobalExceptionHandler.java
+
+│
+
+└── util/
+
+    └── TextSimilarityUtil.java
+
+```
+
+
+
+Keep service classes concrete.
+
+
+
+Do NOT create unnecessary `Service` interfaces and `ServiceImpl` classes.
+
+
+
+This reduces boilerplate while still clearly satisfying the Service-layer requirement.
+
+
+
+---
+
+
+
+# 7. TECHNOLOGY STACK
+
+
+
+Use:
+
+
+
+### Backend
+
+
+
+```text
+
+Java 17+
+
+Spring Boot 4.1.1
+
+Spring Web MVC
+
+Spring Data JPA
+
+Spring Validation
+
+Spring Security
+
+JWT
+
+MySQL
+
+Swagger/OpenAPI
+
+SLF4J + Logback
+
+Apache Tika for resume extraction
+
+Maven
+
+```
+
+
+
+Use the current compatible versions supplied by Spring Boot dependency management whenever possible.
+
+
+
+Do not manually override versions unless necessary.
+
+
+
+---
+
+
+
+### Database
+
+
+
+Use:
+
+
+
+```text
+
+MySQL 8.4+
+
+```
+
+
+
+Database name:
+
+
+
+```text
+
+careerops
+
+```
+
+
+
+Do not commit:
+
+
+
+```text
+
+username
+
+password
+
+JWT secret
+
+AI API key
+
+```
+
+
+
+Use environment variables.
+
+
+
+---
+
+
+

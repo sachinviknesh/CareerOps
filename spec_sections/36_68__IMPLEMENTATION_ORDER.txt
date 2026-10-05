@@ -1,0 +1,234 @@
+# 68. IMPLEMENTATION ORDER
+
+
+
+Build strictly in this order.
+
+
+
+### Phase 1
+
+
+
+Create Spring Boot project.
+
+
+
+Verify startup.
+
+
+
+### Phase 2
+
+
+
+Create entities and relationships.
+
+
+
+Verify MySQL tables.
+
+
+
+### Phase 3
+
+
+
+Repositories.
+
+
+
+Add derived queries.
+
+
+
+### Phase 4
+
+
+
+Services.
+
+
+
+Implement CRUD.
+
+
+
+### Phase 5
+
+
+
+Controllers.
+
+
+
+Verify REST endpoints.
+
+
+
+### Phase 6
+
+
+
+Validation and global exceptions.
+
+
+
+### Phase 7
+
+
+
+JWT security.
+
+
+
+Verify protected routes.
+
+
+
+### Phase 8
+
+
+
+Pagination and sorting.
+
+
+
+### Phase 9
+
+
+
+JPQL queries.
+
+
+
+### Phase 10
+
+
+
+Swagger.
+
+
+
+### Phase 11
+
+
+
+Resume extraction.
+
+
+
+### Phase 12
+
+
+
+Offline resume analysis.
+
+
+
+### Phase 13
+
+
+
+Offline job fit.
+
+
+
+### Phase 14
+
+
+
+Minimal React frontend.
+
+
+
+### Phase 15
+
+
+
+Optional AI.
+
+
+
+### Phase 16
+
+
+
+Postman collection.
+
+
+
+### Phase 17
+
+
+
+Automated tests.
+
+
+
+### Phase 18
+
+
+
+README + architecture + screenshots.
+
+
+
+Do not start the next phase until the previous phase runs correctly.
+
+
+
+---
+
+
+
+# 69. ANTIGRAVITY EXECUTION MODE
+
+
+
+You are operating as the implementation agent.
+
+
+
+Before writing code:
+
+
+
+1. Inspect the workspace.
+
+2. Check whether a project already exists.
+
+3. Do not overwrite unrelated files.
+
+4. Determine the installed Java/Maven/Node versions.
+
+5. Use current compatible dependencies.
+
+6. Create the smallest viable architecture.
+
+7. Implement incrementally.
+
+8. Run compilation/tests after each major phase.
+
+9. Run the backend.
+
+10. Exercise endpoints with HTTP requests.
+
+11. Open Swagger with the browser agent.
+
+12. Verify the frontend through the browser.
+
+13. Fix errors rather than hiding them.
+
+14. Keep a short implementation log in `docs/build-log.md`.
+
+
+
+Use your terminal, editor, and browser verification capabilities.
+
+
+
+---
+
+
+

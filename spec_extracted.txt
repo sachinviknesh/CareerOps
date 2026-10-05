@@ -1,0 +1,2917 @@
+<USER_REQUEST>
+# BUILD SPECIFICATION — CAREEROPS
+
+## 1. PROJECT IDENTITY
+
+Build a small, professional, hackathon-quality full-stack application named:
+
+**CareerOps — Opportunity & Job-Fit Tracker**
+
+Tagline:
+
+**Track. Compare. Apply. Improve.**
+
+This is a student mini-project built primarily to demonstrate:
+
+* Spring Boot
+* Spring Data JPA
+* MySQL
+* REST APIs
+* CRUD
+* Derived queries
+* JPQL
+* Pagination
+* Sorting
+* JPA relationships
+* Validation
+* Exception handling
+* Swagger/OpenAPI
+* JWT authentication
+* Logging
+* API testing
+
+The application should additionally provide a meaningful real-world feature:
+
+**Compare a candidate against a job/opportunity and explain the fit.**
+
+The tracker must support:
+
+* Jobs
+* Internships
+* Hackathons
+* CTFs
+* Other opportunities
+* Opportunities that are still "To Apply"
+
+Do NOT build a giant enterprise system.
+
+The goal is:
+
+**minimum code + maximum meaningful functionality + clean architecture + professional presentation.**
+
+---
+
+# 2. IMPORTANT DEVELOPMENT RULES
+
+Follow these rules throughout the entire implementation.
+
+### No unnecessary complexity
+
+Do NOT add:
+
+* Microservices
+* Kafka
+* Redis
+* Elasticsearch
+* Docker Kubernetes
+* GraphQL
+* WebSockets
+* Event sourcing
+* CQRS
+* Admin portal
+* Complex role hierarchy
+* Payment systems
+* Notification infrastructure
+* OAuth provider integration
+* Separate AI microservice
+
+Everything must remain inside one Spring Boot application.
+
+---
+
+### No hardcoded application data
+
+Do NOT hardcode:
+
+* Opportunities
+* Jobs
+* Companies
+* Candidate data
+* Skills
+* API keys
+* passwords
+* JWT secrets
+* AI credentials
+* frontend API URLs
+* Fit weights
+* User-specific information
+
+All business data must come from:
+
+* MySQL
+* user input
+* uploaded resume
+* job description
+* environment variables
+* configuration properties
+* optional AI service
+
+Enums are allowed for controlled states such as:
+
+`JOB`, `INTERNSHIP`, `HACKATHON`, `CTF`, `OTHER`
+
+and:
+
+`TO_APPLY`, `APPLIED`, `ASSESSMENT`, `INTERVIEW`, `SELECTED`, `REJECTED`, `WITHDRAWN`
+
+These are domain states, not sample data.
+
+---
+
+### No styling hardcoded repeatedly
+
+Do NOT use:
+
+* inline styles
+* random colors per component
+* random margins/paddings
+* duplicated CSS
+* arbitrary component styling
+* huge Tailwind utility strings everywhere
+* gradients
+* glassmorphism
+* neon colors
+* oversized dashboard cards
+* generic AI-dashboard appearance
+
+Create a centralized design-token CSS file and use CSS variables.
+
+Example concept:
+
+```css
+:root {
+    --color-bg: ...;
+    --color-surface: ...;
+    --color-text: ...;
+    --color-muted: ...;
+    --color-border: ...;
+    --color-accent: ...;
+
+    --space-1: ...;
+    --space-2: ...;
+    --space-3: ...;
+    --space-4: ...;
+
+    --radius-sm: ...;
+    --radius-md: ...;
+
+    --content-width: ...;
+}
+```
+
+Do not duplicate these values inside individual components.
+
+---
+
+# 3. PRODUCT CONCEPT
+
+The application solves one simple problem:
+
+A student or early-career candidate applies to many different opportunities and has difficulty knowing:
+
+1. What opportunities they found
+2. What they still need to apply for
+3. What stage each application is in
+4. Which skills the opportunity needs
+5. Which skills they already have
+6. Which skills are missing
+7. Whether their resume supports the requirements
+8. What should be improved before applying
+
+The application therefore has two main areas:
+
+### A. Opportunity Tracker
+
+Track:
+
+* Job
+* Internship
+* Hackathon
+* CTF
+* Other
+
+### B. Job-Fit Analyzer
+
+Compare:
+
+**Candidate profile + candidate skills + extracted resume text**
+
+against:
+
+**Opportunity title + description + required skills + experience + education + location/work mode where available**
+
+Return an explainable result rather than a mysterious number.
+
+---
+
+# 4. KEEP EXACTLY 4 JPA ENTITY CLASSES
+
+Use exactly these primary entities.
+
+## Entity 1 — Candidate
+
+Represents the authenticated user/candidate.
+
+Suggested fields:
+
+```text
+id
+name
+email
+passwordHash
+headline
+location
+education
+experienceYears
+targetRoles
+resumeFileName
+resumeText
+createdAt
+updatedAt
+```
+
+Do NOT create a separate Resume entity.
+
+The extracted resume text can be stored directly in Candidate.
+
+This intentionally keeps the entity count at four.
+
+---
+
+## Entity 2 — Opportunity
+
+Represents anything the candidate may want to pursue.
+
+Fields:
+
+```text
+id
+title
+organization
+type
+roleFamily
+description
+location
+workMode
+url
+deadline
+postedAt
+active
+createdAt
+updatedAt
+```
+
+`type`:
+
+```text
+JOB
+INTERNSHIP
+HACKATHON
+CTF
+OTHER
+```
+
+`roleFamily` should remain a flexible text field rather than creating another entity.
+
+Examples:
+
+```text
+Software Engineering
+Backend Development
+Frontend Development
+Full Stack
+Cloud
+DevOps
+SRE
+AI
+ML
+NLP
+Data Engineering
+Data Science
+Cybersecurity
+QA/SDET
+Mobile
+Product Engineering
+Technical Support
+Solutions Engineering
+Other
+```
+
+Do not hardcode these values into the frontend.
+
+The user can enter them, and the AI can suggest them.
+
+---
+
+## Entity 3 — Skill
+
+Fields:
+
+```text
+id
+name
+category
+createdAt
+```
+
+Examples are NOT seeded into the application.
+
+The user can create them.
+
+AI may also extract candidate skills or opportunity skills.
+
+Skill category is free text such as:
+
+```text
+Programming
+Framework
+Database
+Cloud
+AI
+ML
+DevOps
+Testing
+Security
+Tool
+Soft Skill
+Other
+```
+
+---
+
+## Entity 4 — Application
+
+Connects a Candidate to an Opportunity.
+
+Fields:
+
+```text
+id
+candidate
+opportunity
+status
+appliedAt
+nextActionDate
+notes
+createdAt
+updatedAt
+```
+
+Status:
+
+```text
+TO_APPLY
+APPLIED
+ASSESSMENT
+INTERVIEW
+SELECTED
+REJECTED
+WITHDRAWN
+```
+
+Important:
+
+**TO_APPLY is the way the system represents an opportunity the candidate has saved but not yet applied to.**
+
+This avoids creating a fifth entity.
+
+---
+
+# 5. JPA RELATIONSHIPS
+
+Use:
+
+```text
+Candidate 1 ---- * Application
+Opportunity 1 ---- * Application
+
+Candidate * ---- * Skill
+Opportunity * ---- * Skill
+```
+
+Therefore demonstrate:
+
+```java
+@ManyToOne
+```
+
+and:
+
+```java
+@ManyToMany
+```
+
+Use join tables for many-to-many relationships.
+
+Do not expose JPA entities directly from controllers because of relationship recursion.
+
+Use small DTO records.
+
+---
+
+# 6. PACKAGE STRUCTURE
+
+Use a normal layered Spring architecture because this is an academic REST API project.
+
+```text
+careerops/
+│
+├── CareerOpsApplication.java
+│
+├── config/
+│   ├── SecurityConfig.java
+│   └── OpenApiConfig.java
+│
+├── controller/
+│   ├── AuthController.java
+│   ├── CandidateController.java
+│   ├── OpportunityController.java
+│   ├── SkillController.java
+│   ├── ApplicationController.java
+│   └── JobFitController.java
+│
+├── service/
+│   ├── AuthService.java
+│   ├── CandidateService.java
+│   ├── OpportunityService.java
+│   ├── SkillService.java
+│   ├── ApplicationService.java
+│   ├── JobFitService.java
+│   ├── ResumeParserService.java
+│   ├── ResumeQualityService.java
+│   └── AiAnalysisService.java
+│
+├── repository/
+│   ├── CandidateRepository.java
+│   ├── OpportunityRepository.java
+│   ├── SkillRepository.java
+│   └── ApplicationRepository.java
+│
+├── entity/
+│   ├── Candidate.java
+│   ├── Opportunity.java
+│   ├── Skill.java
+│   └── Application.java
+│
+├── dto/
+│   ├── auth/
+│   ├── candidate/
+│   ├── opportunity/
+│   ├── skill/
+│   ├── application/
+│   └── fit/
+│
+├── security/
+│   ├── JwtService.java
+│   └── JwtAuthenticationFilter.java
+│
+├── exception/
+│   ├── ResourceNotFoundException.java
+│   ├── BadRequestException.java
+│   └── GlobalExceptionHandler.java
+│
+└── util/
+    └── TextSimilarityUtil.java
+```
+
+Keep service classes concrete.
+
+Do NOT create unnecessary `Service` interfaces and `ServiceImpl` classes.
+
+This reduces boilerplate while still clearly satisfying the Service-layer requirement.
+
+---
+
+# 7. TECHNOLOGY STACK
+
+Use:
+
+### Backend
+
+```text
+Java 17+
+Spring Boot 4.1.1
+Spring Web MVC
+Spring Data JPA
+Spring Validation
+Spring Security
+JWT
+MySQL
+Swagger/OpenAPI
+SLF4J + Logback
+Apache Tika for resume extraction
+Maven
+```
+
+Use the current compatible versions supplied by Spring Boot dependency management whenever possible.
+
+Do not manually override versions unless necessary.
+
+---
+
+### Database
+
+Use:
+
+```text
+MySQL 8.4+
+```
+
+Database name:
+
+```text
+careerops
+```
+
+Do not commit:
+
+```text
+username
+password
+JWT secret
+AI API key
+```
+
+Use environment variables.
+
+---
+
+# 8. CONFIGURATION
+
+Use one clean `application.yml`.
+
+All environment-sensitive values must be externalized.
+
+Example structure:
+
+```yaml
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE}
+      max-request-size: ${MAX_FILE_SIZE}
+
+server:
+  port: ${SERVER_PORT:8080}
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-minutes: ${JWT_EXPIRATION_MINUTES:120}
+
+  fit:
+    skill-weight: ${FIT_SKILL_WEIGHT}
+    responsibility-weight: ${FIT_RESPONSIBILITY_WEIGHT}
+    experience-weight: ${FIT_EXPERIENCE_WEIGHT}
+    resume-weight: ${FIT_RESUME_WEIGHT}
+
+ai:
+  enabled: ${AI_ENABLED:false}
+  base-url: ${AI_BASE_URL:}
+  api-key: ${AI_API_KEY:}
+  model: ${AI_MODEL:}
+```
+
+Do not hardcode credentials.
+
+Create:
+
+```text
+.env.example
+```
+
+with placeholder names only.
+
+---
+
+# 9. AUTHENTICATION
+
+Implement:
+
+```text
+POST /api/auth/register
+POST /api/auth/login
+```
+
+Use BCrypt for passwords.
+
+Login response:
+
+```json
+{
+  "token": "...",
+  "expiresIn": 7200
+}
+```
+
+Use JWT bearer authentication.
+
+Protected routes must require:
+
+```text
+Authorization: Bearer <token>
+```
+
+Keep authentication simple.
+
+No OAuth server.
+
+No refresh-token system.
+
+No role hierarchy unless necessary.
+
+---
+
+# 10. CRUD REQUIREMENTS
+
+Every major domain must have proper CRUD.
+
+## Candidate
+
+```text
+GET    /api/candidates/me
+PUT    /api/candidates/me
+DELETE /api/candidates/me
+```
+
+Registration provides CREATE.
+
+---
+
+## Opportunity
+
+```text
+POST   /api/opportunities
+GET    /api/opportunities
+GET    /api/opportunities/{id}
+PUT    /api/opportunities/{id}
+DELETE /api/opportunities/{id}
+```
+
+---
+
+## Skill
+
+```text
+POST   /api/skills
+GET    /api/skills
+GET    /api/skills/{id}
+PUT    /api/skills/{id}
+DELETE /api/skills/{id}
+```
+
+---
+
+## Application
+
+```text
+POST   /api/applications
+GET    /api/applications
+GET    /api/applications/{id}
+PUT    /api/applications/{id}
+DELETE /api/applications/{id}
+```
+
+---
+
+# 11. JPA DERIVED QUERIES
+
+Implement real derived queries.
+
+Examples:
+
+```java
+Optional<Candidate> findByEmailIgnoreCase(String email);
+
+boolean existsByEmailIgnoreCase(String email);
+
+Page<Opportunity> findByType(
+    OpportunityType type,
+    Pageable pageable
+);
+
+Page<Opportunity> findByTitleContainingIgnoreCase(
+    String title,
+    Pageable pageable
+);
+
+Page<Application> findByCandidateIdAndStatus(
+    Long candidateId,
+    ApplicationStatus status,
+    Pageable pageable
+);
+
+Optional<Skill> findByNameIgnoreCase(String name);
+```
+
+Use these through services.
+
+---
+
+# 12. JPQL QUERIES
+
+Add meaningful JPQL.
+
+Example:
+
+```java
+@Query("""
+    select distinct o
+    from Opportunity o
+    join o.requiredSkills s
+    where lower(s.name) = lower(:skill)
+""")
+Page<Opportunity> findByRequiredSkill(
+    String skill,
+    Pageable pageable
+);
+```
+
+Another useful query:
+
+```java
+@Query("""
+    select a
+    from Application a
+    where a.candidate.id = :candidateId
+      and a.opportunity.type = :type
+""")
+Page<Application> findApplicationsByType(
+    Long candidateId,
+    OpportunityType type,
+    Pageable pageable
+);
+```
+
+Add at least 2 clearly demonstrable JPQL queries.
+
+---
+
+# 13. PAGINATION + SORTING
+
+Opportunity endpoint:
+
+```text
+GET /api/opportunities?page=0&size=10&sort=deadline,asc
+```
+
+Application endpoint:
+
+```text
+GET /api/applications?page=0&size=10&sort=createdAt,desc
+```
+
+Support filtering:
+
+```text
+type
+status
+roleFamily
+location
+search
+```
+
+Do not create separate endpoints for every filter.
+
+Use query parameters.
+
+Example:
+
+```text
+GET /api/opportunities?type=JOB&search=backend&page=0&size=10&sort=deadline,asc
+```
+
+Validate allowed sort fields.
+
+Do not blindly accept arbitrary property names.
+
+---
+
+# 14. RESUME FEATURE — OFFLINE FIRST
+
+Add:
+
+```text
+POST /api/candidates/me/resume
+Content-Type: multipart/form-data
+```
+
+Accept:
+
+```text
+PDF
+DOCX
+```
+
+Use Apache Tika to extract text locally.
+
+Do NOT upload the resume to an external AI service merely to extract text.
+
+Store:
+
+```text
+resumeFileName
+resumeText
+```
+
+inside Candidate.
+
+The original resume file does not need permanent storage.
+
+This keeps the implementation simple.
+
+---
+
+# 15. OFFLINE RESUME QUALITY ANALYSIS
+
+Create:
+
+```text
+GET /api/candidates/me/resume-analysis
+```
+
+This must work without AI.
+
+It should inspect extracted resume text and provide useful checks.
+
+Check for:
+
+### Section presence
+
+Detect common sections such as:
+
+```text
+Summary/Profile
+Education
+Experience
+Projects
+Skills
+Certifications
+Achievements
+```
+
+Do not require every section.
+
+Report what exists and what is missing.
+
+---
+
+### Text extraction quality
+
+If the document extracted almost no text:
+
+```text
+Possible image-only or extraction-poor resume.
+```
+
+Do not claim certainty.
+
+---
+
+### Experience structure
+
+Check whether experience/project entries appear to be present.
+
+---
+
+### Quantified evidence
+
+Detect the presence of numbers/metrics in project or experience bullets.
+
+Example:
+
+```text
+20%
+30 users
+2 seconds
+50 requests
+```
+
+Do not invent metrics.
+
+---
+
+### Technical terminology
+
+Compare technologies found in the resume against the selected opportunity's description.
+
+---
+
+### Job-title alignment
+
+Compare the candidate's stated roles and previous role titles against the target opportunity title.
+
+---
+
+### Resume readability
+
+Check whether the extracted text contains a reasonable amount of meaningful content.
+
+Return explanatory findings instead of pretending this is an official ATS score.
+
+---
+
+# 16. JOB-FIT FEATURE
+
+This is the main differentiating feature.
+
+Endpoint:
+
+```text
+GET /api/opportunities/{id}/fit
+```
+
+The service compares:
+
+```text
+Candidate profile
+Candidate skills
+Resume text
+Target role
+Opportunity description
+Opportunity required skills
+Experience requirement where identifiable
+Education requirement where identifiable
+Location/work mode where available
+```
+
+The result must be explainable.
+
+---
+
+# 17. OFFLINE JOB-FIT ALGORITHM
+
+Do NOT depend on AI for the base score.
+
+Implement a transparent deterministic algorithm.
+
+### A. Skill match
+
+Normalize:
+
+```text
+lowercase
+trim whitespace
+remove punctuation
+normalize common separators
+```
+
+Compare candidate skills with opportunity required skills.
+
+Produce:
+
+```text
+matchedSkills
+missingSkills
+```
+
+Example:
+
+```json
+{
+  "matchedSkills": [
+    "Java",
+    "Spring Boot",
+    "MySQL"
+  ],
+  "missingSkills": [
+    "Docker",
+    "Kubernetes"
+  ]
+}
+```
+
+Never invent skills.
+
+---
+
+### B. Resume evidence
+
+Check whether required skills also appear in resume text.
+
+This distinguishes:
+
+```text
+candidate has skill selected
+```
+
+from:
+
+```text
+candidate has actual resume evidence
+```
+
+---
+
+### C. Description/resume similarity
+
+Implement a lightweight local text similarity method.
+
+Use:
+
+```text
+tokenization
+term frequencies
+inverse document frequency
+cosine similarity
+```
+
+Do NOT add a vector database.
+
+Do NOT add embeddings for the base implementation.
+
+This provides a meaningful offline NLP feature with relatively little code.
+
+---
+
+### D. Experience comparison
+
+Attempt to extract a stated experience requirement from the job description.
+
+Example:
+
+```text
+2+ years
+3 years experience
+```
+
+Compare against:
+
+```text
+Candidate.experienceYears
+```
+
+If a requirement cannot be identified:
+
+```text
+UNKNOWN
+```
+
+Do not automatically fail the candidate.
+
+---
+
+### E. Education comparison
+
+Compare the opportunity's education wording with the candidate's education text.
+
+Return:
+
+```text
+MATCH
+PARTIAL
+UNKNOWN
+```
+
+Do not assume that one degree automatically makes someone eligible unless the text clearly supports it.
+
+---
+
+### F. Resume quality signals
+
+Add signals from the offline resume analysis.
+
+---
+
+# 18. FIT RESULT
+
+Return something similar to:
+
+```json
+{
+  "score": 78,
+  "confidence": "MEDIUM",
+  "matchedSkills": [],
+  "missingSkills": [],
+  "evidenceFound": [],
+  "eligibilityChecks": [],
+  "resumeSignals": [],
+  "nextActions": []
+}
+```
+
+The exact score weighting must come from configuration.
+
+Do not hardcode percentages inside Java.
+
+For example:
+
+```text
+FIT_SKILL_WEIGHT
+FIT_RESPONSIBILITY_WEIGHT
+FIT_EXPERIENCE_WEIGHT
+FIT_RESUME_WEIGHT
+```
+
+All weights must total 100%.
+
+Validate this configuration at startup.
+
+---
+
+# 19. DO NOT PRESENT FIT AS A GUARANTEE
+
+The UI must never say:
+
+```text
+You will get the job.
+```
+
+Do not say:
+
+```text
+This guarantees ATS success.
+```
+
+Instead use:
+
+```text
+Estimated fit
+Evidence
+Matched requirements
+Missing requirements
+Areas to improve
+```
+
+Add a small note:
+
+```text
+Fit is an explanatory heuristic based on the information available in your profile and the opportunity description. It is not a hiring decision or guarantee.
+```
+
+---
+
+# 20. AI FEATURE — OPTIONAL ENHANCEMENT
+
+AI must NOT be required for the application to work.
+
+When:
+
+```text
+AI_ENABLED=false
+```
+
+the application must still provide:
+
+* CRUD
+* resume extraction
+* resume analysis
+* job-fit analysis
+* skill comparison
+* tracking
+* Swagger
+* authentication
+* pagination
+* sorting
+
+When AI is enabled, add:
+
+```text
+POST /api/opportunities/{id}/ai-review
+```
+
+---
+
+# 21. AI PROVIDER DESIGN
+
+Do NOT tightly couple the project to one AI company.
+
+Use a generic OpenAI-compatible HTTP interface.
+
+Configuration:
+
+```text
+AI_BASE_URL
+AI_API_KEY
+AI_MODEL
+```
+
+This allows:
+
+* local Ollama
+* hosted OpenAI-compatible provider
+* another compatible endpoint
+
+For local/offline AI experimentation, support Ollama through the same configurable interface.
+
+Do not require AI for project execution.
+
+---
+
+# 22. AI REVIEW FEATURES
+
+The AI should receive:
+
+```text
+candidate profile
+resume text
+candidate skills
+opportunity title
+opportunity description
+required skills
+offline fit result
+resume quality result
+```
+
+The AI should return structured JSON.
+
+Required sections:
+
+```text
+roleSummary
+strongEvidence
+missingSkills
+evidenceGaps
+resumeImprovements
+projectSuggestions
+skillsToStrengthen
+interviewFocus
+behavioralTopics
+technicalTopics
+recommendedNextActions
+```
+
+Do NOT make the AI invent:
+
+* experience
+* projects
+* certifications
+* employers
+* skills
+* achievements
+* metrics
+
+Prompt the model explicitly:
+
+```text
+Use only evidence available in the candidate data.
+If information is missing, say it is missing.
+Do not fabricate achievements or experience.
+```
+
+---
+
+# 23. RESEARCH-BASED RESUME GUIDANCE
+
+Create:
+
+```text
+docs/research/hiring-guidance.md
+```
+
+Do not present this as proprietary MNC hiring knowledge.
+
+Describe it as:
+
+**Public recruiting guidance and recruiter/interview material used to inform the application's analysis.**
+
+The application should incorporate the following evidence-based themes:
+
+### Role alignment
+
+The resume and candidate profile should clearly correspond to the target role.
+
+### Skills
+
+Relevant technical skills should be clearly represented.
+
+### Experience and projects
+
+Projects should demonstrate actual technical work rather than just listing technologies.
+
+### Measurable evidence
+
+Where truthful, achievements should describe measurable outcomes.
+
+### Standard terminology
+
+Use generally understood industry terminology.
+
+### Parser-friendly resume
+
+Prefer clean, text-based DOCX/PDF structure.
+
+Avoid relying on images to communicate important experience or skills.
+
+### Clear job titles
+
+Use descriptive industry-understandable titles.
+
+### Reverse chronological experience
+
+Use conventional experience ordering.
+
+### Technical + behavioral preparation
+
+Technical roles can involve both technical assessment and behavioral evaluation.
+
+These ideas are supported by public Microsoft, Amazon, NVIDIA and recruiter material.
+
+Do not claim:
+
+```text
+Google uses exactly this score.
+Amazon uses exactly this score.
+Microsoft ATS gives this score.
+NVIDIA uses this internal formula.
+```
+
+Those claims are not justified.
+
+---
+
+# 24. ROLE FAMILY COVERAGE
+
+The application should support the broad digital/technology ecosystem without creating dozens of entities.
+
+The job-fit engine should work with opportunities in areas such as:
+
+```text
+Software Engineering
+Backend
+Frontend
+Full Stack
+Mobile
+Cloud
+DevOps
+SRE
+Platform Engineering
+Data Engineering
+Data Science
+AI
+Machine Learning
+NLP
+Cybersecurity
+QA
+SDET
+Automation
+Product Engineering
+Technical Support
+Solutions Engineering
+Implementation
+IT Services
+Service-Based Engineering
+Product-Based Engineering
+Infrastructure
+Database
+Embedded
+Other
+```
+
+These are not database-enforced hardcoded categories.
+
+They are examples in documentation only.
+
+The actual opportunity can contain free-text `roleFamily`.
+
+---
+
+# 25. APPLICATION TRACKER FLOW
+
+Example workflow:
+
+```text
+Find Opportunity
+       ↓
+Save Opportunity
+       ↓
+Status = TO_APPLY
+       ↓
+Compare Fit
+       ↓
+Review Missing Skills
+       ↓
+Review Resume
+       ↓
+Apply
+       ↓
+Status = APPLIED
+       ↓
+Assessment
+       ↓
+Interview
+       ↓
+Selected / Rejected / Withdrawn
+```
+
+The user should be able to change status through PUT.
+
+---
+
+# 26. APPLICATION API EXAMPLE
+
+Create:
+
+```http
+POST /api/applications
+Authorization: Bearer <token>
+Content-Type: application/json
+```
+
+Request:
+
+```json
+{
+  "opportunityId": 1,
+  "status": "TO_APPLY",
+  "nextActionDate": "2026-10-10",
+  "notes": "Tailor resume before applying"
+}
+```
+
+---
+
+# 27. VALIDATION
+
+Use Jakarta Bean Validation.
+
+Examples:
+
+```java
+@NotBlank
+private String title;
+
+@NotBlank
+@Email
+private String email;
+
+@NotNull
+private OpportunityType type;
+
+@Size(max = 10000)
+private String description;
+```
+
+Validate:
+
+* email
+* password
+* title
+* type
+* application status
+* dates
+* description length
+* file type
+* file size
+
+Do not duplicate validation manually in controllers.
+
+---
+
+# 28. EXCEPTION HANDLING
+
+Create:
+
+```text
+GlobalExceptionHandler
+```
+
+Handle:
+
+```text
+ResourceNotFoundException
+BadRequestException
+MethodArgumentNotValidException
+AccessDeniedException
+AuthenticationException
+DataIntegrityViolationException
+```
+
+Return one consistent error format:
+
+```json
+{
+  "timestamp": "2026-10-03T12:00:00",
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Opportunity not found",
+  "path": "/api/opportunities/99"
+}
+```
+
+Do not expose stack traces.
+
+---
+
+# 29. LOGGING
+
+Use SLF4J.
+
+Log important application events:
+
+```text
+registration
+login success/failure
+opportunity creation
+opportunity update
+application creation
+status change
+resume upload
+fit analysis
+AI request success/failure
+```
+
+Do NOT log:
+
+```text
+password
+JWT
+AI API key
+resume full text
+```
+
+Use INFO for normal business operations.
+
+Use WARN for rejected/invalid operations.
+
+Use ERROR for unexpected failures.
+
+---
+
+# 30. SWAGGER / OPENAPI
+
+Use springdoc OpenAPI.
+
+Swagger UI:
+
+```text
+/swagger-ui.html
+```
+
+or the generated current route supported by the chosen springdoc version.
+
+Document:
+
+* Auth endpoints
+* Candidate endpoints
+* Opportunity endpoints
+* Skill endpoints
+* Application endpoints
+* Fit endpoint
+* AI endpoint
+
+Configure bearer JWT security in OpenAPI so the user can click:
+
+```text
+Authorize
+```
+
+and enter:
+
+```text
+Bearer <JWT>
+```
+
+Swagger must be sufficient to demonstrate the backend without Postman.
+
+---
+
+# 31. FRONTEND
+
+Build a very small React frontend.
+
+Use:
+
+```text
+React
+Vite
+Fetch API
+CSS
+```
+
+Do not introduce a large UI framework unless it clearly reduces implementation complexity.
+
+The backend remains the primary assignment.
+
+The frontend is mainly for professional presentation and demonstration.
+
+---
+
+# 32. FRONTEND PAGES
+
+Only build these screens:
+
+```text
+/login
+/register
+/dashboard
+/opportunities
+/opportunities/:id
+/applications
+/profile
+/resume
+```
+
+No unnecessary pages.
+
+---
+
+# 33. DASHBOARD
+
+Make the dashboard useful, not decorative.
+
+Show compact summaries:
+
+```text
+To Apply
+Applied
+In Progress
+Interview
+Selected
+Closing Soon
+```
+
+Also show:
+
+```text
+Upcoming deadlines
+Recent applications
+Recent opportunities
+```
+
+Do not use giant decorative metric cards.
+
+Use a professional operational layout.
+
+---
+
+# 34. OPPORTUNITIES SCREEN
+
+Use a data table.
+
+Columns:
+
+```text
+Opportunity
+Organization
+Type
+Role
+Deadline
+Status
+Actions
+```
+
+Filters:
+
+```text
+Search
+Type
+Role Family
+Location
+```
+
+Support:
+
+```text
+Pagination
+Sorting
+```
+
+Each row should have:
+
+```text
+View
+Edit
+Delete
+```
+
+---
+
+# 35. OPPORTUNITY DETAIL SCREEN
+
+Show:
+
+```text
+Title
+Organization
+Type
+Role Family
+Location
+Work Mode
+Deadline
+Description
+Required Skills
+Source URL
+```
+
+Main action area:
+
+```text
+Analyze Fit
+AI Review
+Add to Tracker
+```
+
+Fit panel:
+
+```text
+Fit Score
+Confidence
+Matched Skills
+Missing Skills
+Evidence
+Resume Signals
+Next Actions
+```
+
+---
+
+# 36. APPLICATIONS SCREEN
+
+Prefer a compact table with status filters.
+
+Example:
+
+```text
+Opportunity
+Type
+Organization
+Status
+Applied
+Next Action
+Fit
+```
+
+Allow:
+
+```text
+Change Status
+Edit Notes
+Delete
+```
+
+Do not build a complicated drag-and-drop Kanban unless it can be implemented with very little extra code.
+
+---
+
+# 37. PROFILE / RESUME SCREEN
+
+Show:
+
+```text
+Candidate Information
+Target Roles
+Education
+Experience
+Skills
+Resume Upload
+Resume Analysis
+```
+
+Resume analysis should have categories:
+
+```text
+Strengths
+Missing Information
+Technical Coverage
+Evidence Signals
+Potential Formatting/Extraction Issues
+```
+
+---
+
+# 38. VISUAL DESIGN
+
+The application should feel like a serious professional productivity tool.
+
+Design direction:
+
+**Editorial enterprise / modern operations console**
+
+NOT:
+
+* generic AI dashboard
+* futuristic neon
+* gradient-heavy SaaS
+* glass cards
+* cartoon UI
+* excessive rounded cards
+
+Use:
+
+* warm neutral background
+* white/off-white surfaces
+* dark charcoal text
+* one restrained accent color
+* subtle borders
+* compact tables
+* clear hierarchy
+* generous but consistent spacing
+* strong typography
+* restrained status colors
+
+---
+
+# 39. TYPOGRAPHY
+
+Use Google Fonts.
+
+Primary font:
+
+**Instrument Sans**
+
+Secondary/technical font:
+
+**IBM Plex Mono**
+
+Use Google Material Symbols from:
+
+**Google Fonts Material Symbols / Icons**
+
+Prefer:
+
+```text
+Material Symbols Outlined
+```
+
+Use icon names such as appropriate Material Symbols for:
+
+```text
+dashboard
+work
+event
+description
+person
+search
+filter_list
+sort
+calendar_today
+edit
+delete
+upload_file
+analytics
+check_circle
+warning
+arrow_back
+open_in_new
+```
+
+Do not use emoji as UI icons.
+
+Do not use random icon libraries when Material Symbols is sufficient.
+
+---
+
+# 40. SPACING SYSTEM
+
+Use one spacing scale.
+
+Example token approach:
+
+```text
+space-1
+space-2
+space-3
+space-4
+space-5
+space-6
+```
+
+Base it on a consistent 4/8-point rhythm.
+
+Use the tokens everywhere.
+
+Do not create:
+
+```text
+margin-left: 13px
+margin-top: 27px
+padding: 19px
+```
+
+in individual components.
+
+---
+
+# 41. LAYOUT
+
+Desktop:
+
+```text
+Left navigation
+        |
+        |---- Main content
+```
+
+Keep content within a readable maximum width.
+
+Suggested structure:
+
+```text
+┌──────────────────────────────────────────────────────────┐
+│ Top bar                                                  │
+├───────────────┬──────────────────────────────────────────┤
+│               │                                          │
+│ Navigation    │ Main Content                             │
+│               │                                          │
+│               │                                          │
+└───────────────┴──────────────────────────────────────────┘
+```
+
+Use a compact navigation rail/sidebar.
+
+On smaller widths, collapse navigation.
+
+---
+
+# 42. FRONTEND DATA HANDLING
+
+Use a small API client:
+
+```text
+src/api/client.js
+```
+
+It should handle:
+
+```text
+base URL
+JWT
+JSON
+errors
+```
+
+Base URL must come from:
+
+```text
+VITE_API_BASE_URL
+```
+
+Do not write:
+
+```text
+http://localhost:8080
+```
+
+inside components.
+
+---
+
+# 43. FRONTEND STATE
+
+Do not add Redux.
+
+Use React state/hooks.
+
+Only create shared helpers where necessary.
+
+Avoid overengineering.
+
+---
+
+# 44. FRONTEND COMPONENT STRUCTURE
+
+Keep it small.
+
+```text
+src/
+├── components/
+│   ├── AppShell
+│   ├── DataTable
+│   ├── StatusBadge
+│   ├── Pagination
+│   ├── SearchBar
+│   ├── OpportunityCard
+│   ├── FitPanel
+│   └── EmptyState
+│
+├── pages/
+│   ├── Login
+│   ├── Register
+│   ├── Dashboard
+│   ├── Opportunities
+│   ├── OpportunityDetail
+│   ├── Applications
+│   ├── Profile
+│   └── Resume
+│
+├── api/
+│   └── client.js
+│
+├── styles/
+│   ├── tokens.css
+│   ├── global.css
+│   └── components.css
+│
+└── App.jsx
+```
+
+Do not make dozens of components.
+
+---
+
+# 45. API RESPONSE STYLE
+
+Use predictable JSON.
+
+For paginated endpoints:
+
+```json
+{
+  "content": [],
+  "page": 0,
+  "size": 10,
+  "totalElements": 42,
+  "totalPages": 5,
+  "first": true,
+  "last": false
+}
+```
+
+Do not expose Spring `Page` directly if it creates an undesirable API contract.
+
+Create a tiny generic `PageResponse<T>` record.
+
+---
+
+# 46. DTO STYLE
+
+Use Java records where appropriate.
+
+Examples:
+
+```java
+public record LoginRequest(
+    @NotBlank @Email String email,
+    @NotBlank String password
+) {}
+```
+
+Keep DTOs intentionally small.
+
+Do not build unnecessary mapper frameworks.
+
+Manual mapping is acceptable where shorter and clearer.
+
+---
+
+# 47. SERVICE RESPONSIBILITY
+
+Controllers must remain thin.
+
+Example:
+
+```text
+Controller
+    ↓
+Service
+    ↓
+Repository
+    ↓
+MySQL
+```
+
+AI:
+
+```text
+Controller
+    ↓
+AiAnalysisService
+    ↓
+Configurable AI provider
+```
+
+Fit:
+
+```text
+Controller
+    ↓
+JobFitService
+    ↓
+Repositories + ResumeQualityService + TextSimilarityUtil
+```
+
+---
+
+# 48. DATABASE SCHEMA
+
+Generate the database automatically through JPA for the classroom project.
+
+Tables should correspond approximately to:
+
+```text
+candidate
+opportunity
+skill
+application
+
+candidate_skill
+opportunity_skill
+```
+
+Do not create unnecessary tables.
+
+---
+
+# 49. SECURITY RULES
+
+Public:
+
+```text
+POST /api/auth/register
+POST /api/auth/login
+```
+
+Protected:
+
+```text
+everything else
+```
+
+A candidate should only be able to access their own:
+
+```text
+profile
+resume
+skills
+applications
+```
+
+An opportunity may be publicly readable if desired, but creation/edit/delete should require authentication.
+
+Since this is a small student project, keep authorization simple.
+
+---
+
+# 50. DUPLICATE APPLICATION RULE
+
+Do not allow the same candidate to create multiple Application records for the same Opportunity unless intentionally updating the existing one.
+
+Use:
+
+```text
+unique candidate + opportunity
+```
+
+constraint.
+
+Handle duplicate insertion using proper exception handling.
+
+---
+
+# 51. DEADLINE LOGIC
+
+Do not build notifications.
+
+Just provide:
+
+```text
+deadline
+nextActionDate
+```
+
+and a lightweight endpoint or query for:
+
+```text
+closing soon
+```
+
+Example:
+
+```text
+GET /api/opportunities/closing-soon
+```
+
+However, prefer a JPQL/derived query instead of complex scheduler logic.
+
+---
+
+# 52. NO BACKGROUND JOB SYSTEM
+
+Do not add:
+
+```text
+Quartz
+Scheduler
+Kafka
+Message queues
+```
+
+The project does not need them.
+
+---
+
+# 53. POSTMAN
+
+Create:
+
+```text
+postman/
+├── CareerOps.postman_collection.json
+└── CareerOps.postman_environment.json
+```
+
+Variables:
+
+```text
+baseUrl
+token
+opportunityId
+applicationId
+skillId
+```
+
+The collection should demonstrate:
+
+1. Register
+2. Login
+3. Save token
+4. Create skill
+5. Create opportunity
+6. Get opportunities
+7. Pagination
+8. Sorting
+9. JPQL-filter endpoint
+10. Create application
+11. Update application
+12. Get application
+13. Delete application
+14. Upload resume
+15. Resume analysis
+16. Job fit
+17. AI review if enabled
+
+Do not use real personal information in the collection.
+
+Use obvious demo placeholders.
+
+---
+
+# 54. AUTOMATED TESTS
+
+Add a small number of meaningful tests.
+
+At minimum:
+
+```text
+Authentication success
+Authentication failure
+Opportunity CRUD
+Application CRUD
+Job-fit calculation
+Validation failure
+```
+
+Do not create hundreds of tests.
+
+Use a test profile.
+
+The main demonstration should still use Swagger/Postman.
+
+---
+
+# 55. DOCUMENTATION
+
+Generate:
+
+```text
+README.md
+docs/
+├── architecture.md
+├── entity-design.md
+├── api.md
+├── testing.md
+├── research/
+│   └── hiring-guidance.md
+└── screenshots/
+```
+
+---
+
+# 56. ENTITY DIAGRAM
+
+Create an easy-to-read Mermaid ER diagram.
+
+Example structure:
+
+```text
+Candidate
+    |
+    | 1
+    |
+    | *
+Application
+    *
+    |
+    | 1
+Opportunity
+```
+
+and:
+
+```text
+Candidate *----* Skill
+Opportunity *----* Skill
+```
+
+Render this cleanly in the documentation.
+
+---
+
+# 57. README MUST EXPLAIN
+
+Include:
+
+```text
+Project overview
+Problem statement
+Features
+Architecture
+Technology stack
+Entity design
+API list
+Setup
+Environment variables
+MySQL setup
+Running backend
+Running frontend
+Swagger
+Postman
+AI configuration
+Offline features
+Testing
+Demo flow
+Team contribution
+```
+
+---
+
+# 58. OFFLINE / ONLINE FEATURE MATRIX
+
+Include this in README:
+
+```text
+Feature                          Offline     AI
+------------------------------------------------
+Authentication                   YES         NO
+CRUD                             YES         NO
+Pagination                       YES         NO
+Sorting                          YES         NO
+Resume extraction               YES         NO
+Resume quality checks            YES         NO
+Skill comparison                YES         NO
+Job-fit calculation             YES         NO
+Text similarity                 YES         NO
+AI resume review                NO          YES
+AI job explanation              NO          YES
+AI missing-skill explanation    NO          YES
+AI interview preparation       NO          YES
+```
+
+This clearly demonstrates that AI is an enhancement, not a dependency.
+
+---
+
+# 59. AI PROMPT SAFETY / QUALITY
+
+Use one central AI system prompt.
+
+It should say approximately:
+
+```text
+You are a career analysis assistant.
+
+Analyze only the information provided.
+
+Never invent:
+- skills
+- experience
+- projects
+- employers
+- certifications
+- metrics
+- achievements
+
+Distinguish between:
+- direct evidence
+- reasonable inference
+- missing information
+
+Use the opportunity description as the primary role-specific context.
+
+Give practical recommendations.
+
+Do not claim that your analysis guarantees hiring, ATS success, interviews, or selection.
+
+Return valid JSON only.
+```
+
+Keep the prompt in a resource file, not scattered across Java classes.
+
+---
+
+# 60. AI RESPONSE MUST BE STRUCTURED
+
+Do not return one giant paragraph.
+
+Return structured sections:
+
+```json
+{
+  "summary": "...",
+  "strengths": [],
+  "matchedSkills": [],
+  "missingSkills": [],
+  "evidenceGaps": [],
+  "resumeRecommendations": [],
+  "projectRecommendations": [],
+  "interviewFocus": [],
+  "nextActions": []
+}
+```
+
+---
+
+# 61. RESEARCH DOCUMENT
+
+The research document should summarize public recruiting material from:
+
+```text
+Microsoft Careers
+Amazon Jobs
+NVIDIA Careers
+Microsoft university recruiter/interview content
+Other authoritative company recruiting material discovered during implementation
+```
+
+Use current official sources where available.
+
+Do not copy long passages.
+
+Summarize the useful principles.
+
+Keep a source title, date if available, and source link.
+
+---
+
+# 62. IMPORTANT DISTINCTION ABOUT "MNC STANDARDS"
+
+The application must use language such as:
+
+```text
+Public hiring guidance
+Evidence-based resume practices
+Public recruiter/interview guidance
+Role-alignment checks
+```
+
+Never label the output:
+
+```text
+Official Microsoft score
+Official Amazon score
+Official Google ATS score
+Official NVIDIA hiring score
+```
+
+because the application does not have access to proprietary internal systems.
+
+---
+
+# 63. PROFESSIONAL UX DETAILS
+
+Use:
+
+* clear page titles
+* small metadata text
+* consistent action placement
+* one primary action per screen
+* secondary actions visually quieter
+* tables for structured information
+* drawers/modals only where useful
+* clear empty states
+* confirmation before destructive deletes
+* visible validation messages
+* loading states
+* API error messages
+* disabled button states during requests
+
+Do not create excessive animations.
+
+Use subtle transitions only where helpful.
+
+---
+
+# 64. ACCESSIBILITY
+
+Use:
+
+```text
+semantic buttons
+labels
+keyboard focus
+sufficient contrast
+aria-label where icons need labels
+```
+
+Material Symbols must not be the only information conveyed by an action.
+
+---
+
+# 65. DEMO SCENARIO
+
+Create the project so a 5–8 minute college demonstration is easy.
+
+Recommended demo:
+
+### Step 1
+
+Register.
+
+### Step 2
+
+Login and obtain JWT.
+
+### Step 3
+
+Create a few skills through API.
+
+### Step 4
+
+Upload a resume.
+
+### Step 5
+
+Show offline resume analysis.
+
+### Step 6
+
+Create an opportunity:
+
+```text
+Backend Software Engineer Intern
+```
+
+with a realistic description entered through Swagger/Postman.
+
+### Step 7
+
+Associate required skills.
+
+### Step 8
+
+Show:
+
+```text
+GET /api/opportunities
+```
+
+with pagination and sorting.
+
+### Step 9
+
+Open the opportunity.
+
+### Step 10
+
+Run:
+
+```text
+GET /api/opportunities/{id}/fit
+```
+
+Show:
+
+```text
+matched skills
+missing skills
+experience result
+resume evidence
+fit score
+next actions
+```
+
+### Step 11
+
+Create Application:
+
+```text
+TO_APPLY
+```
+
+### Step 12
+
+Change to:
+
+```text
+APPLIED
+```
+
+### Step 13
+
+Optionally run:
+
+```text
+POST /api/opportunities/{id}/ai-review
+```
+
+Show AI recommendations.
+
+### Step 14
+
+Open Swagger UI and explain:
+
+```text
+Controller
+Service
+Repository
+JPA
+MySQL
+JWT
+Validation
+Exception handling
+```
+
+This sequence should visibly cover the assignment requirements.
+
+---
+
+# 66. TEAM OF 3–4 STUDENTS
+
+Design the project so contributions are easy to demonstrate.
+
+### Member 1 — Backend/Core
+
+Responsible for:
+
+```text
+Entity
+Repository
+CRUD
+JPA
+MySQL
+```
+
+### Member 2 — Security/API
+
+Responsible for:
+
+```text
+JWT
+Validation
+Exception handling
+Swagger
+Logging
+```
+
+### Member 3 — Job-Fit/Resume
+
+Responsible for:
+
+```text
+Resume extraction
+Resume quality
+Skill comparison
+Offline fit algorithm
+```
+
+### Member 4 — Frontend/AI/Testing
+
+Responsible for:
+
+```text
+React UI
+AI integration
+Postman
+Testing
+Screenshots
+Documentation
+```
+
+Each member should make visible Git commits.
+
+Do not fabricate contribution history.
+
+---
+
+# 67. GIT
+
+Initialize Git immediately.
+
+Use meaningful commits:
+
+```text
+init project structure
+add entities and repositories
+add opportunity CRUD
+add application CRUD
+add JWT authentication
+add validation and exception handling
+add swagger documentation
+add resume extraction
+add offline job fit
+add frontend shell
+add AI review
+add testing and documentation
+```
+
+Do not create one giant final commit.
+
+---
+
+# 68. IMPLEMENTATION ORDER
+
+Build strictly in this order.
+
+### Phase 1
+
+Create Spring Boot project.
+
+Verify startup.
+
+### Phase 2
+
+Create entities and relationships.
+
+Verify MySQL tables.
+
+### Phase 3
+
+Repositories.
+
+Add derived queries.
+
+### Phase 4
+
+Services.
+
+Implement CRUD.
+
+### Phase 5
+
+Controllers.
+
+Verify REST endpoints.
+
+### Phase 6
+
+Validation and global exceptions.
+
+### Phase 7
+
+JWT security.
+
+Verify protected routes.
+
+### Phase 8
+
+Pagination and sorting.
+
+### Phase 9
+
+JPQL queries.
+
+### Phase 10
+
+Swagger.
+
+### Phase 11
+
+Resume extraction.
+
+### Phase 12
+
+Offline resume analysis.
+
+### Phase 13
+
+Offline job fit.
+
+### Phase 14
+
+Minimal React frontend.
+
+### Phase 15
+
+Optional AI.
+
+### Phase 16
+
+Postman collection.
+
+### Phase 17
+
+Automated tests.
+
+### Phase 18
+
+README + architecture + screenshots.
+
+Do not start the next phase until the previous phase runs correctly.
+
+---
+
+# 69. ANTIGRAVITY EXECUTION MODE
+
+You are operating as the implementation agent.
+
+Before writing code:
+
+1. Inspect the workspace.
+2. Check whether a project already exists.
+3. Do not overwrite unrelated files.
+4. Determine the installed Java/Maven/Node versions.
+5. Use current compatible dependencies.
+6. Create the smallest viable architecture.
+7. Implement incrementally.
+8. Run compilation/tests after each major phase.
+9. Run the backend.
+10. Exercise endpoints with HTTP requests.
+11. Open Swagger with the browser agent.
+12. Verify the frontend through the browser.
+13. Fix errors rather than hiding them.
+14. Keep a short implementation log in `docs/build-log.md`.
+
+Use your terminal, editor, and browser verification capabilities.
+
+---
+
+# 70. FINAL QUALITY GATE
+
+Before considering the project complete, verify all of the following:
+
+```text
+[ ] Spring Boot application starts
+[ ] MySQL connection works
+[ ] Exactly 4 primary JPA entities
+[ ] Repository layer exists
+[ ] Service layer exists
+[ ] Controller layer exists
+[ ] GET works
+[ ] POST works
+[ ] PUT works
+[ ] DELETE works
+[ ] Derived JPA queries work
+[ ] JPQL queries work
+[ ] Pagination works
+[ ] Sorting works
+[ ] JPA relationship works
+[ ] Validation works
+[ ] Global exception handling works
+[ ] Swagger UI works
+[ ] JWT registration works
+[ ] JWT login works
+[ ] Protected endpoints reject unauthenticated requests
+[ ] Logging works
+[ ] Resume PDF/DOCX extraction works
+[ ] Offline resume analysis works
+[ ] Offline job-fit works
+[ ] Skill comparison works
+[ ] Application tracking works
+[ ] Optional AI works when configured
+[ ] Application still works with AI disabled
+[ ] React frontend works
+[ ] Postman collection works
+[ ] README complete
+[ ] Entity diagram complete
+[ ] API documentation complete
+[ ] Testing documentation complete
+[ ] Screenshots captured
+```
+
+---
+
+# 71. FINAL PRINCIPLE
+
+Do NOT optimize for the largest feature set.
+
+Optimize for:
+
+```text
+Small codebase
+Clear architecture
+Real problem
+Explainable job fit
+Offline-first core
+Optional AI
+Professional UI
+Easy Swagger demonstration
+Easy Postman testing
+Easy viva explanation
+```
+
+The final project should feel like a **well-designed student product**, not a giant generated enterprise system.
+
+When a feature can be implemented in 20 lines instead of 100 lines, choose the 20-line solution.
+
+When a feature adds complexity without helping the assignment or the central product idea, do not build it.
+
+Start implementation now.
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-10-03T13:07:21+05:30.
+</ADDITIONAL_METADATA>
+<USER_SETTINGS_CHANGE>
+The user changed setting `Model Selection` from None to Claude Sonnet 4.6 (Thinking). No need to comment on this change if the user doesn't ask about it. If reporting what model you are, please use a human readable name instead of the exact string.
+</USER_SETTINGS_CHANGE>

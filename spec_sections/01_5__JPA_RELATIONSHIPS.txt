@@ -1,0 +1,64 @@
+# 5. JPA RELATIONSHIPS
+
+
+
+Use:
+
+
+
+```text
+
+Candidate 1 ---- * Application
+
+Opportunity 1 ---- * Application
+
+
+
+Candidate * ---- * Skill
+
+Opportunity * ---- * Skill
+
+```
+
+
+
+Therefore demonstrate:
+
+
+
+```java
+
+@ManyToOne
+
+```
+
+
+
+and:
+
+
+
+```java
+
+@ManyToMany
+
+```
+
+
+
+Use join tables for many-to-many relationships.
+
+
+
+Do not expose JPA entities directly from controllers because of relationship recursion.
+
+
+
+Use small DTO records.
+
+
+
+---
+
+
+

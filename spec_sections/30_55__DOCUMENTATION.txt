@@ -1,0 +1,36 @@
+# 55. DOCUMENTATION
+
+
+
+Generate:
+
+
+
+```text
+
+README.md
+
+docs/
+
+├── architecture.md
+
+├── entity-design.md
+
+├── api.md
+
+├── testing.md
+
+├── research/
+
+│   └── hiring-guidance.md
+
+└── screenshots/
+
+```
+
+
+
+---
+
+
+

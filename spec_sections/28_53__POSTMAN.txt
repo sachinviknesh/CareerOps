@@ -1,0 +1,92 @@
+# 53. POSTMAN
+
+
+
+Create:
+
+
+
+```text
+
+postman/
+
+├── CareerOps.postman_collection.json
+
+└── CareerOps.postman_environment.json
+
+```
+
+
+
+Variables:
+
+
+
+```text
+
+baseUrl
+
+token
+
+opportunityId
+
+applicationId
+
+skillId
+
+```
+
+
+
+The collection should demonstrate:
+
+
+
+1. Register
+
+2. Login
+
+3. Save token
+
+4. Create skill
+
+5. Create opportunity
+
+6. Get opportunities
+
+7. Pagination
+
+8. Sorting
+
+9. JPQL-filter endpoint
+
+10. Create application
+
+11. Update application
+
+12. Get application
+
+13. Delete application
+
+14. Upload resume
+
+15. Resume analysis
+
+16. Job fit
+
+17. AI review if enabled
+
+
+
+Do not use real personal information in the collection.
+
+
+
+Use obvious demo placeholders.
+
+
+
+---
+
+
+

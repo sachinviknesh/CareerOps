@@ -1,0 +1,268 @@
+# 17. OFFLINE JOB-FIT ALGORITHM
+
+
+
+Do NOT depend on AI for the base score.
+
+
+
+Implement a transparent deterministic algorithm.
+
+
+
+### A. Skill match
+
+
+
+Normalize:
+
+
+
+```text
+
+lowercase
+
+trim whitespace
+
+remove punctuation
+
+normalize common separators
+
+```
+
+
+
+Compare candidate skills with opportunity required skills.
+
+
+
+Produce:
+
+
+
+```text
+
+matchedSkills
+
+missingSkills
+
+```
+
+
+
+Example:
+
+
+
+```json
+
+{
+
+  "matchedSkills": [
+
+    "Java",
+
+    "Spring Boot",
+
+    "MySQL"
+
+  ],
+
+  "missingSkills": [
+
+    "Docker",
+
+    "Kubernetes"
+
+  ]
+
+}
+
+```
+
+
+
+Never invent skills.
+
+
+
+---
+
+
+
+### B. Resume evidence
+
+
+
+Check whether required skills also appear in resume text.
+
+
+
+This distinguishes:
+
+
+
+```text
+
+candidate has skill selected
+
+```
+
+
+
+from:
+
+
+
+```text
+
+candidate has actual resume evidence
+
+```
+
+
+
+---
+
+
+
+### C. Description/resume similarity
+
+
+
+Implement a lightweight local text similarity method.
+
+
+
+Use:
+
+
+
+```text
+
+tokenization
+
+term frequencies
+
+inverse document frequency
+
+cosine similarity
+
+```
+
+
+
+Do NOT add a vector database.
+
+
+
+Do NOT add embeddings for the base implementation.
+
+
+
+This provides a meaningful offline NLP feature with relatively little code.
+
+
+
+---
+
+
+
+### D. Experience comparison
+
+
+
+Attempt to extract a stated experience requirement from the job description.
+
+
+
+Example:
+
+
+
+```text
+
+2+ years
+
+3 years experience
+
+```
+
+
+
+Compare against:
+
+
+
+```text
+
+Candidate.experienceYears
+
+```
+
+
+
+If a requirement cannot be identified:
+
+
+
+```text
+
+UNKNOWN
+
+```
+
+
+
+Do not automatically fail the candidate.
+
+
+
+---
+
+
+
+### E. Education comparison
+
+
+
+Compare the opportunity's education wording with the candidate's education text.
+
+
+
+Return:
+
+
+
+```text
+
+MATCH
+
+PARTIAL
+
+UNKNOWN
+
+```
+
+
+
+Do not assume that one degree automatically makes someone eligible unless the text clearly supports it.
+
+
+
+---
+
+
+
+### F. Resume quality signals
+
+
+
+Add signals from the offline resume analysis.
+
+
+
+---
+
+
+

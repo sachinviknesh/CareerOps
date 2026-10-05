@@ -1,0 +1,76 @@
+# 9. AUTHENTICATION
+
+
+
+Implement:
+
+
+
+```text
+
+POST /api/auth/register
+
+POST /api/auth/login
+
+```
+
+
+
+Use BCrypt for passwords.
+
+
+
+Login response:
+
+
+
+```json
+
+{
+
+  "token": "...",
+
+  "expiresIn": 7200
+
+}
+
+```
+
+
+
+Use JWT bearer authentication.
+
+
+
+Protected routes must require:
+
+
+
+```text
+
+Authorization: Bearer <token>
+
+```
+
+
+
+Keep authentication simple.
+
+
+
+No OAuth server.
+
+
+
+No refresh-token system.
+
+
+
+No role hierarchy unless necessary.
+
+
+
+---
+
+
+

@@ -1,0 +1,62 @@
+# 20. AI FEATURE — OPTIONAL ENHANCEMENT
+
+
+
+AI must NOT be required for the application to work.
+
+
+
+When:
+
+
+
+```text
+
+AI_ENABLED=false
+
+```
+
+
+
+the application must still provide:
+
+
+
+* CRUD
+
+* resume extraction
+
+* resume analysis
+
+* job-fit analysis
+
+* skill comparison
+
+* tracking
+
+* Swagger
+
+* authentication
+
+* pagination
+
+* sorting
+
+
+
+When AI is enabled, add:
+
+
+
+```text
+
+POST /api/opportunities/{id}/ai-review
+
+```
+
+
+
+---
+
+
+
