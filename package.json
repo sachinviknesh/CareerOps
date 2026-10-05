@@ -1,0 +1,12 @@
+{
+  "name": "careerops-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CareerOps Full-Stack Workspace",
+  "scripts": {
+    "dev": "npm --prefix careerops-ui run dev",
+    "build": "npm --prefix careerops-ui run build",
+    "preview": "npm --prefix careerops-ui run preview",
+    "install:ui": "npm --prefix careerops-ui install"
+  }
+}
