@@ -1,0 +1,743 @@
+{
+  "info": {
+    "_postman_id": "careerops-collection-001",
+    "name": "CareerOps API",
+    "description": "Comprehensive Postman collection for CareerOps Opportunity & Job-Fit Tracking API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "01. Auth - Register",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "var data = pm.response.json();",
+              "if (data.token) {",
+              "    pm.environment.set(\"token\", data.token);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Demo Candidate\",\n  \"email\": \"candidate.demo@careerops.local\",\n  \"password\": \"SecurePass123!\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/register",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "register"
+          ]
+        },
+        "description": "Register a new candidate account and auto-save the generated JWT token."
+      }
+    },
+    {
+      "name": "02. Auth - Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "var data = pm.response.json();",
+              "if (data.token) {",
+              "    pm.environment.set(\"token\", data.token);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"candidate.demo@careerops.local\",\n  \"password\": \"SecurePass123!\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "description": "Authenticate candidate credentials and update the environment token."
+      }
+    },
+    {
+      "name": "03. Skills - Create Skill",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "var data = pm.response.json();",
+              "if (data.id) {",
+              "    pm.environment.set(\"skillId\", data.id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Spring Boot\",\n  \"category\": \"BACKEND\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/skills",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "skills"
+          ]
+        },
+        "description": "Create a new catalog skill and save skillId into environment."
+      }
+    },
+    {
+      "name": "04. Opportunities - Create Opportunity",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "var data = pm.response.json();",
+              "if (data.id) {",
+              "    pm.environment.set(\"opportunityId\", data.id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Backend Engineer Intern\",\n  \"organization\": \"Acme Cloud Labs\",\n  \"type\": \"INTERNSHIP\",\n  \"roleFamily\": \"Backend Engineering\",\n  \"description\": \"Build scalable REST APIs using Java, Spring Boot, and MySQL. Write clean unit tests and collaborate with frontend teams.\",\n  \"location\": \"Remote\",\n  \"workMode\": \"REMOTE\",\n  \"url\": \"https://example.org/careers/backend-intern\",\n  \"deadline\": \"2026-12-31\",\n  \"postedAt\": \"2026-10-01\",\n  \"active\": true,\n  \"requiredSkillIds\": [{{skillId}}]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/opportunities",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "opportunities"
+          ]
+        },
+        "description": "Create an opportunity associated with the newly created skill and store opportunityId."
+      }
+    },
+    {
+      "name": "05. Opportunities - Get Opportunities (All)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/opportunities",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "opportunities"
+          ]
+        },
+        "description": "Retrieve list of all opportunities."
+      }
+    },
+    {
+      "name": "06. Opportunities - Pagination",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "var data = pm.response.json();",
+              "pm.test(\"Page is 0 and size is 5\", function() {",
+              "    pm.expect(data.page).to.eql(0);",
+              "    pm.expect(data.size).to.eql(5);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/opportunities?page=0&size=5",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "opportunities"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "0"
+            },
+            {
+              "key": "size",
+              "value": "5"
+            }
+          ]
+        },
+        "description": "Demonstrate paginated results with page and size parameters."
+      }
+    },
+    {
+      "name": "07. Opportunities - Sorting",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/opportunities?sort=createdAt,desc",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "opportunities"
+          ],
+          "query": [
+            {
+              "key": "sort",
+              "value": "createdAt,desc"
+            }
+          ]
+        },
+        "description": "Demonstrate sorting by allowed entity attributes (createdAt, deadline, title, etc.)."
+      }
+    },
+    {
+      "name": "08. Opportunities - JPQL Filter (Closing Soon)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/opportunities/closing-soon?days=60",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "opportunities",
+            "closing-soon"
+          ],
+          "query": [
+            {
+              "key": "days",
+              "value": "60"
+            }
+          ]
+        },
+        "description": "JPQL query for opportunities closing within the next N days."
+      }
+    },
+    {
+      "name": "09. Opportunities - Search & Derived Filter",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/opportunities?search=Backend&type=INTERNSHIP",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "opportunities"
+          ],
+          "query": [
+            {
+              "key": "search",
+              "value": "Backend"
+            },
+            {
+              "key": "type",
+              "value": "INTERNSHIP"
+            }
+          ]
+        },
+        "description": "Derived filter query searching keyword and matching opportunity type."
+      }
+    },
+    {
+      "name": "10. Candidate - Update Profile & Skills",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Demo Candidate\",\n  \"headline\": \"Aspiring Backend Software Engineer\",\n  \"location\": \"San Francisco, CA\",\n  \"education\": \"B.S. in Computer Science\",\n  \"experienceSummary\": \"Built REST services and data pipelines using Java and Spring Boot. Increased API throughput by 25% through indexing.\",\n  \"targetRoles\": [\"Backend Engineer\", \"Software Engineer\"],\n  \"skillIds\": [{{skillId}}]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/candidates/me",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "candidates",
+            "me"
+          ]
+        },
+        "description": "Update candidate profile and associate candidate skills."
+      }
+    },
+    {
+      "name": "11. Applications - Create Application",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "var data = pm.response.json();",
+              "if (data.id) {",
+              "    pm.environment.set(\"applicationId\", data.id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"opportunityId\": {{opportunityId}},\n  \"status\": \"APPLIED\",\n  \"appliedAt\": \"2026-10-05\",\n  \"nextActionDate\": \"2026-10-15\",\n  \"notes\": \"Applied online via portal. Reached out to recruiter on LinkedIn.\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/applications",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "applications"
+          ]
+        },
+        "description": "Track opportunity in candidate pipeline and prevent duplicate entries."
+      }
+    },
+    {
+      "name": "12. Applications - Get Application by ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/applications/{{applicationId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "applications",
+            "{{applicationId}}"
+          ]
+        },
+        "description": "Fetch application record by ID for authenticated user."
+      }
+    },
+    {
+      "name": "13. Applications - Update Application",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "var data = pm.response.json();",
+              "pm.test(\"Status updated to INTERVIEW\", function() {",
+              "    pm.expect(data.status).to.eql(\"INTERVIEW\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"opportunityId\": {{opportunityId}},\n  \"status\": \"INTERVIEW\",\n  \"appliedAt\": \"2026-10-05\",\n  \"nextActionDate\": \"2026-10-20\",\n  \"notes\": \"Invited for round 1 technical interview on System Design & Spring Boot.\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/applications/{{applicationId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "applications",
+            "{{applicationId}}"
+          ]
+        },
+        "description": "Progress application status to interview stage."
+      }
+    },
+    {
+      "name": "14. Candidate - Upload Resume",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "",
+              "description": "Select sample resume PDF or DOCX file"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/candidates/me/resume",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "candidates",
+            "me",
+            "resume"
+          ]
+        },
+        "description": "Upload a candidate resume (PDF or DOCX) parsed server-side using Apache Tika."
+      }
+    },
+    {
+      "name": "15. Candidate - Resume Quality Analysis",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "var data = pm.response.json();",
+              "pm.test(\"Contains quality score\", function() {",
+              "    pm.expect(data.score).to.be.a('number');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/candidates/me/resume-analysis",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "candidates",
+            "me",
+            "resume-analysis"
+          ]
+        },
+        "description": "Perform offline heuristic resume analysis (section detection, action verbs, metrics count)."
+      }
+    },
+    {
+      "name": "16. Job Fit - Offline Heuristic Fit Analysis",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "var data = pm.response.json();",
+              "pm.test(\"Contains match score and skill breakdown\", function() {",
+              "    pm.expect(data.matchScore).to.be.a('number');",
+              "    pm.expect(data.matchedSkills).to.be.an('array');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/opportunities/{{opportunityId}}/fit",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "opportunities",
+            "{{opportunityId}}",
+            "fit"
+          ]
+        },
+        "description": "Calculate offline job-fit score comparing skills, experience, and responsibilities."
+      }
+    },
+    {
+      "name": "17. AI Review - Grounded LLM Review",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/opportunities/{{opportunityId}}/ai-review",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "opportunities",
+            "{{opportunityId}}",
+            "ai-review"
+          ]
+        },
+        "description": "Trigger optional AI review grounded with candidate data and opportunity specifications."
+      }
+    },
+    {
+      "name": "18. Applications - Delete Application",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 204\", function () {",
+              "    pm.response.to.have.status(204);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/applications/{{applicationId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "applications",
+            "{{applicationId}}"
+          ]
+        },
+        "description": "Remove tracked application record from candidate pipeline."
+      }
+    }
+  ]
+}
