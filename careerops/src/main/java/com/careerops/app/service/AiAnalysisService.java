@@ -67,53 +67,13 @@ public class AiAnalysisService {
             throw new BadRequestException("AI base URL is not configured. Please set AI_BASE_URL.");
         }
 
-        String targetModel = (model != null && !model.isBlank()) ? model : "gpt-3.5-turbo";
+        String targetModel = resolveModel(model);
         String prompt = buildPrompt(candidate, opportunity, fitResponse, resumeQuality);
 
         log.info("Sending AI review request to {} with model {}", baseUrl, targetModel);
 
         try {
-            Map<String, Object> message = Map.of("role", "user", "content", prompt);
-            Map<String, Object> requestBody = Map.of(
-                    "model", targetModel,
-                    "messages", List.of(
-                            Map.of("role", "system", "content",
-                                    "You are an objective hiring readiness analyzer. " +
-                                    "Use ONLY evidence available in the candidate data. " +
-                                    "If information is missing, state clearly that it is missing. " +
-                                    "Do NOT fabricate achievements, certifications, or experience. " +
-                                    "Always respond with a valid, clean JSON object matching the requested schema without markdown backticks."),
-                            message
-                    ),
-                    "temperature", 0.2
-            );
-
-            String jsonPayload = objectMapper.writeValueAsString(requestBody);
-
-            String endpoint = baseUrl.endsWith("/") ? baseUrl + "chat/completions" : baseUrl + "/chat/completions";
-            HttpRequest.Builder reqBuilder = HttpRequest.newBuilder()
-                    .uri(URI.create(endpoint))
-                    .timeout(Duration.ofSeconds(45))
-                    .header("Content-Type", "application/json");
-
-            if (apiKey != null && !apiKey.isBlank()) {
-                reqBuilder.header("Authorization", "Bearer " + apiKey);
-            }
-
-            HttpRequest request = reqBuilder.POST(HttpRequest.BodyPublishers.ofString(jsonPayload)).build();
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-            if (response.statusCode() < 200 || response.statusCode() >= 300) {
-                log.error("AI API returned error status {}: {}", response.statusCode(), response.body());
-                throw new BadRequestException("AI provider returned error HTTP " + response.statusCode() + ": " + response.body());
-            }
-
-            JsonNode root = objectMapper.readTree(response.body());
-            String content = root.path("choices").path(0).path("message").path("content").asText();
-
-            log.info("AI review response received successfully");
-            return parseAiResponse(content);
-
+            return executeAiRequest(targetModel, prompt);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.error("AI review request was interrupted", e);
@@ -122,6 +82,129 @@ public class AiAnalysisService {
             log.error("AI request communication failure", e);
             throw new BadRequestException("Failed to communicate with AI endpoint: " + e.getMessage());
         }
+    }
+
+    private String resolveModel(String configuredModel) {
+        if (configuredModel == null || configuredModel.isBlank()) {
+            return "gemini-3.8-flash";
+        }
+        String m = configuredModel.trim();
+        if ("gemini-1.5-flash".equalsIgnoreCase(m) || "gemini-2.5-flash".equalsIgnoreCase(m)) {
+            log.info("Model '{}' is obsolete or retired. Normalizing to supported 'gemini-3.8-flash'", m);
+            return "gemini-3.8-flash";
+        }
+        return m;
+    }
+
+    private String getEffectiveApiKey() {
+        if (apiKey != null && !apiKey.isBlank()) {
+            return apiKey.trim();
+        }
+        String sysAiKey = System.getProperty("AI_API_KEY");
+        if (sysAiKey != null && !sysAiKey.isBlank()) {
+            return sysAiKey.trim();
+        }
+        String envAiKey = System.getenv("AI_API_KEY");
+        if (envAiKey != null && !envAiKey.isBlank()) {
+            return envAiKey.trim();
+        }
+        String jobKey = System.getProperty("JOB_API_KEY");
+        if (jobKey != null && !jobKey.isBlank()) {
+            return jobKey.trim();
+        }
+        return null;
+    }
+
+    private AiReviewResponse executeAiRequest(String targetModel, String prompt) throws IOException, InterruptedException {
+        boolean isGeminiNative = baseUrl.contains("generativelanguage.googleapis.com") && !baseUrl.contains("/openai");
+        String endpoint;
+        String jsonPayload;
+        HttpRequest.Builder reqBuilder = HttpRequest.newBuilder()
+                .timeout(Duration.ofSeconds(45))
+                .header("Content-Type", "application/json");
+
+        String systemInstructions =
+                "You are an objective hiring readiness analyzer. " +
+                "Use ONLY evidence available in the candidate data. " +
+                "If information is missing, state clearly that it is missing. " +
+                "Do NOT fabricate achievements, certifications, or experience. " +
+                "Always respond with a valid, clean JSON object matching the requested schema without markdown backticks.";
+
+        String effectiveKey = getEffectiveApiKey();
+
+        if (isGeminiNative) {
+            // Google Gemini native generateContent API
+            String cleanBase = baseUrl.replaceAll("/+$", "");
+            if (cleanBase.contains("/models/")) {
+                endpoint = cleanBase.endsWith(":generateContent") ? cleanBase : cleanBase + ":generateContent";
+            } else {
+                endpoint = cleanBase + "/models/" + targetModel + ":generateContent";
+            }
+
+            if (effectiveKey != null && !effectiveKey.isBlank()) {
+                reqBuilder.header("x-goog-api-key", effectiveKey);
+                if (!endpoint.contains("key=")) {
+                    endpoint += (endpoint.contains("?") ? "&" : "?") + "key=" + effectiveKey;
+                }
+            }
+
+            Map<String, Object> nativePayload = Map.of(
+                    "contents", List.of(
+                            Map.of("parts", List.of(
+                                    Map.of("text", systemInstructions + "\n\n" + prompt)
+                            ))
+                    ),
+                    "generationConfig", Map.of(
+                            "temperature", 0.2
+                    )
+            );
+            jsonPayload = objectMapper.writeValueAsString(nativePayload);
+            reqBuilder.uri(URI.create(endpoint));
+        } else {
+            // OpenAI-compatible /chat/completions API (Ollama, Gemini OpenAI endpoint, etc.)
+            endpoint = baseUrl.endsWith("/") ? baseUrl + "chat/completions" : baseUrl + "/chat/completions";
+            reqBuilder.uri(URI.create(endpoint));
+            if (effectiveKey != null && !effectiveKey.isBlank()) {
+                reqBuilder.header("Authorization", "Bearer " + effectiveKey);
+            }
+
+            Map<String, Object> requestBody = Map.of(
+                    "model", targetModel,
+                    "messages", List.of(
+                            Map.of("role", "system", "content", systemInstructions),
+                            Map.of("role", "user", "content", prompt)
+                    ),
+                    "temperature", 0.2
+            );
+            jsonPayload = objectMapper.writeValueAsString(requestBody);
+        }
+
+        HttpRequest request = reqBuilder.POST(HttpRequest.BodyPublishers.ofString(jsonPayload)).build();
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        // Automatic retry with gemini-3.8-flash if an obsolete model returned 404
+        if (response.statusCode() == 404 && response.body().contains("models/") && !targetModel.equals("gemini-3.8-flash")) {
+            log.warn("AI model '{}' returned 404 not found. Retrying with 'gemini-3.8-flash'...", targetModel);
+            return executeAiRequest("gemini-3.8-flash", prompt);
+        }
+
+        if (response.statusCode() < 200 || response.statusCode() >= 300) {
+            log.error("AI API returned error status {}: {}", response.statusCode(), response.body());
+            throw new BadRequestException("AI provider returned error HTTP " + response.statusCode() + ": " + response.body());
+        }
+
+        JsonNode root = objectMapper.readTree(response.body());
+        String content = "";
+        if (root.has("candidates") && root.path("candidates").isArray() && !root.path("candidates").isEmpty()) {
+            content = root.path("candidates").path(0).path("content").path("parts").path(0).path("text").asText();
+        } else if (root.has("choices") && root.path("choices").isArray() && !root.path("choices").isEmpty()) {
+            content = root.path("choices").path(0).path("message").path("content").asText();
+        } else {
+            content = response.body();
+        }
+
+        log.info("AI review response received successfully");
+        return parseAiResponse(content);
     }
 
     private String buildPrompt(Candidate candidate,

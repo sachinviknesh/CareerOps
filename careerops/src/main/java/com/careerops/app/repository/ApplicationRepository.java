@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -28,7 +29,18 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
     long countByCandidateIdAndStatus(Long candidateId, ApplicationStatus status);
 
-    // JPQL query #3 — filter by opportunity type for a candidate
+    // Derived queries for College Requirements (Requirement 8)
+    List<Application> findByStatus(ApplicationStatus status);
+
+    List<Application> findByUserId(Long userId);
+
+    List<Application> findByOpportunityId(Long opportunityId);
+
+    // JPQL query (Requirement 9)
+    @Query("SELECT a FROM Application a WHERE a.user.id = :userId")
+    List<Application> findApplicationsByUserId(@Param("userId") Long userId);
+
+    // JPQL query — filter by opportunity type for a candidate
     @Query("""
             select a
             from Application a

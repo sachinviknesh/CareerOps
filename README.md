@@ -1,260 +1,308 @@
-# CareerOps — Opportunity & Explainable Job-Fit Tracker
+# CareerOps – Career Opportunity Management System
 
-> A production-grade, offline-first career management platform featuring multi-criteria opportunity discovery, resume extraction, explainable heuristic job-fit scoring, application pipeline tracking, and optional grounded AI review.
-
----
-
-## 1. Project Overview
-
-**CareerOps** is designed to address the frustration early-career candidates experience when navigating fragmented job portals and black-box applicant tracking systems. Instead of guessing why an application failed, CareerOps computes a transparent, explainable job-fit score grounded in the candidate's actual resume, skills, and background.
-
-The core architecture operates **100% offline**: resume parsing, structural quality checks, keyword categorization, and mathematical similarity scoring run locally within the Spring Boot application without requiring third-party cloud services or paid APIs. AI features are purely an optional enhancement.
+> **Academic REST API Mini-Project & Real-World Career Operations Platform**  
+> Built with **Spring Boot 3.3.4**, **Spring Data JPA**, **MySQL 8+**, **Spring Security 6 (JWT + BCrypt)**, and **React 18 (Vite)**.  
+> Developed for college REST API mini-project requirements: 4 Entity classes, Repository-Service-Controller layers, full CRUD, Derived & JPQL queries, Pagination, Sorting, JPA relationships, Jakarta Validation, Global Exception Handling, Swagger/OpenAPI, JWT authentication, SLF4J logging, and automated testing.
 
 ---
 
-## 2. Problem Statement
+## 1. Project Overview & Problem Statement
 
-1. **Opaque Screening**: Most platforms score candidates using undisclosed algorithms without explaining which skills are missing or how to improve.
-2. **Scattered Tracking**: Students apply across LinkedIn, company portals, Hackathons, and CTFs, losing track of deadlines, follow-ups, and interview stages.
-3. **Fragile AI Dependencies**: Many modern tools break if external AI APIs hit rate limits or downtime. CareerOps ensures all critical workflows function offline.
+### 1.1 Problem Statement
+1. **Fragmented Opportunities**: Students and job seekers in India miss out on hackathons, CTF competitions, fellowships, and internships because announcements are scattered across college portals, Devfolio, Unstop, LinkedIn, and government boards.
+2. **Opaque Screening**: Traditional ATS portals reject applicants without explaining skill deficiencies or how to qualify.
+3. **Location & Travel Barriers**: Candidates often register for events without knowing travel distances, inter-city transport logistics, or accommodation requirements.
+4. **Scattered Tracking**: Applicants struggle to track submission deadlines, assessment rounds, and interview feedback in a single place.
 
----
-
-## 3. Offline / Online Feature Matrix
-
-| Feature | Offline (Core Engine) | AI (Optional Enhancement) |
-| :--- | :---: | :---: |
-| **Authentication & Registration** | **YES** | NO |
-| **CRUD for All Entities** | **YES** | NO |
-| **Pagination & Sorting** | **YES** | NO |
-| **Resume Text Extraction (PDF/DOCX)** | **YES** (Apache Tika) | NO |
-| **Resume Structural Quality Analysis** | **YES** (Local Heuristics) | NO |
-| **Skill Comparison (Matched vs Missing)** | **YES** | NO |
-| **Job-Fit Score Calculation (0–100)** | **YES** (Multi-Factor Math) | NO |
-| **Responsibility Cosine Text Similarity** | **YES** (Vector Math) | NO |
-| **Application Pipeline Tracking** | **YES** | NO |
-| **AI Resume Review & Strengths** | NO | **YES** (Grounded LLM) |
-| **AI Role & Requirement Explanation** | NO | **YES** (Grounded LLM) |
-| **AI Targeted Skill Gap Guidance** | NO | **YES** (Grounded LLM) |
-| **AI Interview Preparation Tips** | NO | **YES** (Grounded LLM) |
-
-*This demonstrates that AI is strictly an enhancement, not a runtime dependency.*
+### 1.2 CareerOps Solution
+**CareerOps** is an all-in-one opportunity discovery and career management platform that:
+- Aggregates and categorizes **12 distinct opportunity types** (Jobs, Internships, Hackathons, CTF Competitions, Fellowships, Coding Competitions, Quizzes, Innovation Challenges, Research Competitions, Student Competitions, Scholarships).
+- Computes an **explainable 0–100% Fit Score** based on skills, experience, education, and location.
+- Provides **Location & Travel Intelligence** using the Haversine formula, automatically calculating distance, transit requirements, and accommodation needs for offline Indian events.
+- Tracks candidates through an **Application Lifecycle Pipeline** (`TO_APPLY`, `APPLIED`, `INTERVIEW`, `SELECTED`, `REJECTED`, `REGISTERED`, `PARTICIPATING`, `COMPLETED`) with duplicate tracking protection.
+- Runs **100% offline-capable** core heuristics, with optional grounded AI review capabilities.
 
 ---
 
-## 4. Key Features
+## 2. Key Academic & Technical Highlights
 
-- **Multi-Category Opportunity Discovery**: Manage and search across **Jobs**, **Internships**, **Hackathons**, and **CTF Competitions** with live keyword filtering, type filters, and pagination.
-- **Deep Resume Extraction**: Parse PDF and DOCX files automatically on upload via Apache Tika into searchable candidate profiles.
-- **Explainable Job-Fit Engine**:
-  - **40% Skill Overlap**: Computes matched vs missing skills from the catalog.
-  - **25% Responsibility Match**: Cosine similarity between resume experience and role description.
-  - **20% Experience & Seniority**: Automated detection and comparison of year thresholds.
-  - **15% Resume Structural Quality**: Detection of key sections, quantifiable metric density, and action verbs.
-- **Pipeline Workflow Tracker**: Track opportunities across stages (`TO_APPLY`, `APPLIED`, `ASSESSMENT`, `INTERVIEW`, `OFFER`, `REJECTED`, `WITHDRAWN`) with next action dates, custom notes, and automatic duplicate application prevention.
-- **Interactive Swagger & Postman**: Full interactive OpenAPI documentation and a ready-to-run 18-request Postman suite with automated token chaining.
-- **Modern Responsive React UI**: High-contrast, clean UI built with React 18, Vite, and vanilla CSS tokens.
+| Criterion | Implementation in CareerOps |
+| :--- | :--- |
+| **Backend Framework** | Spring Boot 3.3.4 (REST API, Spring Web, Spring Data JPA, Spring Security, Spring Validation) |
+| **Primary Database** | MySQL 8.4+ (production-grade schema, relational integrity, foreign keys, unique indexes) |
+| **Dual-Mode Engine** | Automatic graceful fallback to file-based H2 (`MODE=MySQL`) when external MySQL server is offline |
+| **Core JPA Entities** | Exactly adheres to requirement: `User`, `Opportunity`, `Application`, `Skill` (+ `Candidate` profile bridge) |
+| **Security Architecture** | Stateless JWT authentication (`io.jsonwebtoken:jjwt`), BCrypt password hashing, role-based authorization |
+| **Repository Layer** | Spring Data JPA with Derived Query Methods + Custom JPQL Queries |
+| **Data Validation** | Jakarta Bean Validation (`@Valid`, `@NotNull`, `@NotBlank`, `@Size`, `@Email`) |
+| **Exception Handling** | `@RestControllerAdvice` (`GlobalExceptionHandler`) producing standardized JSON error contracts |
+| **API Documentation** | OpenAPI 3.0 / Swagger UI with interactive JWT Bearer authorization |
+| **Frontend UI** | React 18, Vite 5, Vanilla CSS Tokens, Glassmorphism theme (100% preserved visual design) |
 
 ---
 
-## 5. Technology Stack
+## 3. Technology Stack
 
 ### Backend
-- **Java 17**
-- **Spring Boot 3.3.4** (Spring Web MVC, Spring Data JPA, Spring Security, Spring Validation)
-- **Database**: MySQL 8.4+ (Production/Dev), H2 In-Memory (Automated Testing)
-- **Security**: Stateless JWT (`io.jsonwebtoken:jjwt` v0.12.6) + BCrypt password hashing
-- **Resume Extraction**: Apache Tika (v2.9.2)
-- **API Documentation**: SpringDoc OpenAPI / Swagger UI (v2.6.0)
-- **Build Tool**: Maven
+- **Language**: Java 17
+- **Framework**: Spring Boot 3.3.4
+- **ORM / Persistence**: Hibernate 6.x, Spring Data JPA
+- **Database**: MySQL 8.x / H2 Dual-Engine
+- **Security**: Spring Security 6, JJWT 0.12.6, BCrypt (10 rounds)
+- **Document Extraction**: Apache Tika 2.9.2
+- **Documentation**: SpringDoc OpenAPI 2.6.0 (Swagger UI)
+- **Build / Dependency Tool**: Maven (`mvnw`)
 
 ### Frontend
-- **React 18**
-- **Vite 5**
-- **Vanilla CSS Tokens & Glassmorphism Aesthetics**
-- **Fetch API with Bearer JWT Auth Interceptors**
+- **Framework**: React 18
+- **Build Tool**: Vite 5
+- **Styling**: Vanilla CSS Design Tokens, Responsive Flex/Grid Layouts, Glassmorphism Card Aesthetics
+- **API Client**: Native `fetch` with token-injected interceptors and automatic state synchronization
 
 ---
 
-## 6. Architecture & Entity Design
-
-### Layered Architecture
-```
-[React SPA Frontend]
-         │ (HTTP / JSON / JWT)
-         ▼
-[JwtAuthenticationFilter] ──► [Spring Security Context]
-         │
-         ▼
-[REST Controllers] (Auth, Candidate, Opportunity, Application, Skill, JobFit)
-         │
-         ▼
-[Service Layer] (JobFitService, ResumeParserService, ResumeQualityService, etc.)
-         │
-         ▼
-[Spring Data JPA Repositories]
-         │
-         ▼
-[MySQL Database / H2 Test Database]
-```
-
-### Entity Design (Exactly 4 Primary JPA Entities)
+## 4. Entity & Relational Database Design
 
 ```mermaid
 erDiagram
-    CANDIDATE ||--o{ APPLICATION : tracks
-    OPPORTUNITY ||--o{ APPLICATION : has
-    CANDIDATE }o--o{ SKILL : possesses
+    USERS ||--o{ APPLICATION : tracks
+    OPPORTUNITY ||--o{ APPLICATION : receives
+    CANDIDATE ||--o{ APPLICATION : associates
     OPPORTUNITY }o--o{ SKILL : requires
+    CANDIDATE }o--o{ SKILL : possesses
+
+    USERS {
+        bigint id PK
+        varchar name
+        varchar email UK
+        varchar password
+        varchar role
+        datetime created_at
+    }
+
+    OPPORTUNITY {
+        bigint id PK
+        varchar title
+        varchar organization
+        text description
+        varchar type
+        varchar location
+        varchar city
+        varchar state
+        varchar work_mode
+        text eligibility
+        date deadline
+        boolean active
+    }
+
+    APPLICATION {
+        bigint id PK
+        bigint user_id FK
+        bigint candidate_id FK
+        bigint opportunity_id FK
+        varchar status
+        date applied_at
+        text notes
+    }
+
+    SKILL {
+        bigint id PK
+        varchar name UK
+        varchar category
+        datetime created_at
+    }
 ```
 
-1. **`Candidate`**: Name, email (unique), password hash, headline, location, education, experience years, resume text, linked skills.
-2. **`Opportunity`**: Title, organization, type (`FULL_TIME`, `INTERNSHIP`, `HACKATHON`, `CTF`), role family, description, location, work mode, deadline, active flag, required skills.
-3. **`Application`**: Candidate foreign key, Opportunity foreign key, status (`TO_APPLY`, `APPLIED`, `INTERVIEW`, etc.), applied date, next action date, notes. **Enforces unique constraint** `(candidate_id, opportunity_id)` to prevent duplicate tracking.
-4. **`Skill`**: Normalized skill name (unique) and category.
+Detailed entity fields and constraint definitions are documented in [docs/ENTITY_DESIGN.md](file:///c:/Users/sachi/Downloads/Application_management/docs/ENTITY_DESIGN.md).
 
 ---
 
-## 7. REST API List
+## 5. Complete REST API Endpoints
 
-Detailed API documentation with request/response samples is available in [careerops/docs/api.md](file:///c:/Users/sachi/Downloads/Application_management/careerops/docs/api.md) and through Swagger UI (`/swagger-ui.html`).
+Detailed endpoint specifications, request bodies, and responses are in [docs/API_DOCUMENTATION.md](file:///c:/Users/sachi/Downloads/Application_management/docs/API_DOCUMENTATION.md).
 
-| Method | Endpoint | Access | Purpose |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/auth/register` | Public | Register new candidate account |
-| `POST` | `/api/auth/login` | Public | Authenticate candidate & obtain JWT |
-| `GET` | `/api/skills` | Bearer | List skill catalog |
-| `POST` | `/api/skills` | Bearer | Add new skill |
-| `GET` | `/api/opportunities` | Public | List opportunities with filter, page & sort |
-| `GET` | `/api/opportunities/closing-soon` | Public | JPQL query for deadlines in next N days |
-| `GET` | `/api/opportunities/{id}` | Public | Get opportunity details & required skills |
-| `POST` | `/api/opportunities` | Bearer | Create opportunity |
-| `PUT` | `/api/opportunities/{id}` | Bearer | Update opportunity |
-| `DELETE` | `/api/opportunities/{id}` | Bearer | Delete opportunity |
-| `GET` | `/api/opportunities/{id}/fit` | Bearer | Calculate explainable offline job fit |
-| `POST` | `/api/opportunities/{id}/ai-review`| Bearer | Run optional AI review |
-| `GET` | `/api/candidates/me` | Bearer | Get authenticated candidate profile |
-| `PUT` | `/api/candidates/me` | Bearer | Update profile & link skills |
-| `POST` | `/api/candidates/me/resume` | Bearer | Upload and parse PDF/DOCX resume |
-| `GET` | `/api/candidates/me/resume-analysis` | Bearer | Offline resume structure analysis |
-| `GET` | `/api/applications` | Bearer | List candidate applications (paged/sorted) |
-| `GET` | `/api/applications/stats` | Bearer | Get aggregated stage statistics |
-| `POST` | `/api/applications` | Bearer | Track opportunity (duplicate guarded) |
-| `PUT` | `/api/applications/{id}` | Bearer | Update application status & notes |
-| `DELETE` | `/api/applications/{id}` | Bearer | Untrack application |
+### 5.1 Authentication Endpoints
+- `POST /api/auth/register` — Register a new user/candidate (BCrypt hashed, validates email and password length).
+- `POST /api/auth/login` — Authenticate credentials and receive a JWT Bearer token.
+
+### 5.2 User Management Endpoints
+- `GET /api/users` — List all registered users (Admin / Evaluation).
+- `GET /api/users/{id}` — Get user details by ID.
+- `GET /api/users/me` — Get profile of currently authenticated user.
+
+### 5.3 Opportunity Endpoints (CRUD + Pagination + Search)
+- `GET /api/opportunities` — List opportunities with pagination (`page`, `size`) and sorting (`sort=deadline,asc`).
+- `GET /api/opportunities/{id}` — Get single opportunity by ID.
+- `POST /api/opportunities` — Create a new opportunity (Validated via Bean Validation).
+- `PUT /api/opportunities/{id}` — Update an existing opportunity.
+- `DELETE /api/opportunities/{id}` — Delete an opportunity (`204 No Content`).
+- `GET /api/opportunities/search?title={title}` — Search opportunities by title.
+- `GET /api/opportunities/type/{type}` — **Derived Query**: Filter by opportunity type (`JOB`, `INTERNSHIP`, `HACKATHON`, etc.).
+- `GET /api/opportunities/location/{location}` — **Derived Query**: Filter by city/location.
+- `GET /api/opportunities/organization/{organization}` — **Derived Query**: Filter by hosting organization.
+- `GET /api/opportunities/closing-soon?days={days}` — **Custom JPQL**: Fetch opportunities closing in the next N days.
+- `GET /api/opportunities/nearby?city={city}&maxDistanceKm={dist}` — Discover offline events within travel radius.
+- `GET /api/opportunities/{id}/fit` — Compute candidate-specific explainable fit and travel intelligence.
+- `POST /api/opportunities/refresh` — Ingest curated opportunities from configured job/hackathon sources.
+
+### 5.4 Application Lifecycle Endpoints
+- `GET /api/applications` — List user's tracked applications.
+- `GET /api/applications/{id}` — Get specific application by ID.
+- `POST /api/applications` — Apply/Track an opportunity (guards against duplicate applications with `409 Conflict`).
+- `PATCH /api/applications/{id}/status?status={status}` — Update stage (`APPLIED`, `INTERVIEW`, `SELECTED`, `REJECTED`).
+- `PUT /api/applications/{id}` — Update status, notes, or next action date.
+- `DELETE /api/applications/{id}` — Untrack/remove application.
+- `GET /api/applications/stats` — Aggregate metrics for user dashboard.
+
+### 5.5 Skill Taxonomy Endpoints
+- `GET /api/skills` — List all normalized skills.
+- `GET /api/skills/{id}` — Get skill by ID.
+- `POST /api/skills` — Add new skill (prevents duplicate names).
+- `PUT /api/skills/{id}` — Update skill name or category.
+- `DELETE /api/skills/{id}` — Delete skill.
 
 ---
 
-## 8. Setup & Execution Guide
+## 6. Setup & Execution Instructions
 
-### 8.1 Prerequisites
-- **Java 17+** (JDK installed)
-- **MySQL Server 8.4+**
+### 6.1 Prerequisites
+- **Java Development Kit (JDK) 17+**
 - **Node.js 18+ & npm**
+- **MySQL 8+** (Optional — defaults to embedded H2 if MySQL is unavailable)
 
-### 8.2 Database Setup
-Create the MySQL database:
+### 6.2 Database Configuration
+If using MySQL, create the database:
 ```sql
 CREATE DATABASE careerops CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-### 8.3 Environment Variables
-Configure your environment by copying `.env.example` to `.env` or setting system environment variables:
-
+Configure your environment variables in `.env` or system environment:
 ```bash
-# Database
+# Database Configuration
 DB_URL=jdbc:mysql://localhost:3306/careerops?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
 DB_USERNAME=root
-DB_PASSWORD=your_password
+DB_PASSWORD=your_mysql_password
 
-# Server & Security
+# JWT Security
+JWT_SECRET=c2FjaGluLWNhcmVlcm9wcy1zZWNyZXQta2V5LTIwMjYtcHJvZHVjdGlvbg==
+JWT_EXPIRATION_MINUTES=1440
+
+# Server Port
 SERVER_PORT=8080
-JWT_SECRET=a_very_secure_and_long_secret_key_with_at_least_32_characters
-JWT_EXPIRATION_MINUTES=120
-
-# Offline Heuristic Fit Weights (Must sum to 100)
-FIT_SKILL_WEIGHT=40
-FIT_RESPONSIBILITY_WEIGHT=25
-FIT_EXPERIENCE_WEIGHT=20
-FIT_RESUME_WEIGHT=15
-
-# Optional AI Integration (OpenAI-compatible or Ollama)
-AI_ENABLED=false
-AI_BASE_URL=http://localhost:11434/v1
-AI_API_KEY=your_key_if_applicable
-AI_MODEL=llama3.2
 ```
 
-### 8.4 Running Backend
+### 6.3 Running the Backend
+From the root directory or `careerops` directory:
 ```bash
 cd careerops
-mvn clean spring-boot:run
+.\mvnw.cmd spring-boot:run
 ```
-- Swagger UI will be available at: `http://localhost:8080/swagger-ui.html`
-- OpenAPI JSON specification: `http://localhost:8080/api-docs`
+- **Backend Port**: `http://localhost:8080`
+- **Health Check**: `http://localhost:8080/`
+- **Interactive Swagger UI**: `http://localhost:8080/swagger-ui.html`
+- **OpenAPI Schema**: `http://localhost:8080/v3/api-docs`
 
-### 8.5 Running Frontend
+### 6.4 Running the Frontend
+In a separate terminal:
 ```bash
 cd careerops-ui
 npm install
 npm run dev
 ```
-Open your browser at `http://localhost:5173`.
+- **Frontend Port**: `http://localhost:5173`
 
 ---
 
-## 9. Automated Testing & Postman
+## 7. Testing & Verification
 
-### 9.1 Automated Tests
-Run the test suite using:
+Comprehensive testing details are documented in [docs/TESTING.md](file:///c:/Users/sachi/Downloads/Application_management/docs/TESTING.md).
+
+Run all automated unit and integration tests:
 ```bash
 cd careerops
-mvn test
+.\mvnw.cmd test
 ```
-The test suite utilizes the dedicated `test` profile with an in-memory H2 database to verify:
-- Registration and login success & rejection
-- Opportunity full CRUD, pagination, and sorting
-- Application tracking and duplicate prevention (HTTP 409 Conflict)
-- Heuristic job-fit scoring mathematics and boundary conditions
-- Jakarta validation failures and structured error responses
 
-### 9.2 Postman Collection
-Import the collection and environment located in `careerops/postman/`:
+### Key Automated Tests Included:
+1. **`AuthIntegrationTest`**: User registration, BCrypt password hashing, duplicate email rejection (`409 Conflict`), JWT authentication, and protected endpoint access.
+2. **`OpportunityCrudTest`**: Complete CRUD lifecycle, derived queries, JPQL queries (`findClosingSoon`), and pagination/sorting verification.
+3. **`ApplicationCrudTest`**: Application pipeline creation, duplicate application blocking, status transitions, and user statistics.
+4. **`ValidationExceptionTest`**: Jakarta Bean Validation rejection (`400 Bad Request`) for blank titles, invalid emails, and short passwords, plus `404 Not Found` handling.
+5. **`OpportunityPlatformTest`**: Travel distance calculation using the Haversine formula, travel badges, eligibility evaluation, and notification filtering.
+
+---
+
+## 8. Postman Collection & Swagger Testing
+
+### 8.1 Testing with Swagger UI
+1. Open `http://localhost:8080/swagger-ui.html` in your browser.
+2. Use `POST /api/auth/register` or `POST /api/auth/login` to obtain a JWT token.
+3. Click the green **Authorize** button at the top right of the Swagger UI.
+4. Paste the token into the value field and click **Authorize**.
+5. Execute protected requests (`/api/applications`, `/api/opportunities`, etc.) directly from the browser!
+
+### 8.2 Testing with Postman
+Import the ready-to-run Postman collection located in `careerops/postman/`:
 - `CareerOps.postman_collection.json`
 - `CareerOps.postman_environment.json`
 
-The collection automatically stores the JWT token upon running `01. Auth - Register` or `02. Auth - Login` and chains entity IDs (`{{opportunityId}}`, `{{applicationId}}`, `{{skillId}}`) dynamically across all 18 demonstration endpoints.
+The collection automatically saves the JWT token into the environment upon running the login or register request and uses it for all subsequent requests.
 
 ---
 
-## 10. Recommended College Demo Flow (5–8 Minutes)
+## 9. Faculty Demonstration & Submission Screenshots
 
-1. **Registration & Login**: Open `http://localhost:5173`, register as a candidate, observe JWT issuance.
-2. **Profile & Resume Upload**: Navigate to the Resume page, upload a sample PDF/DOCX resume, and observe instant text extraction via Apache Tika.
-3. **Offline Resume Analysis**: Review the detected sections (Experience, Projects, Education), action verbs, and quantifiable metrics.
-4. **Opportunity Exploration**: Browse opportunities, sort by deadline/creation date, and filter by "Internship" or keyword.
-5. **Job-Fit Breakdown**: Click an opportunity's **Fit Score** button to inspect the explainable breakdown: matched vs missing skills, experience eligibility, and actionable improvement steps.
-6. **Application Pipeline**: Track the opportunity as `TO_APPLY`, transition it to `APPLIED` with interview notes, and demonstrate dashboard statistics.
-7. **Swagger UI Walkthrough**: Open `/swagger-ui.html` and present the clean Controller-Service-Repository architecture and error responses.
+### 9.1 Faculty Demonstration Guide
+Follow the step-by-step 29-step faculty demonstration sequence documented in:  
+👉 **[docs/DEMO_GUIDE.md](file:///c:/Users/sachi/Downloads/Application_management/docs/DEMO_GUIDE.md)**
+
+### 9.2 Submission Screenshots Checklist
+Capture the following 23 screenshots for the final lab record/report:
+1. Project structure in IntelliJ IDEA / Explorer
+2. 4 Entity classes (`User`, `Opportunity`, `Application`, `Skill`)
+3. JPA `@ManyToOne` and `@OneToMany` relationships
+4. Repository layer interfaces
+5. Service layer implementations with `@Transactional`
+6. Controller layer REST endpoints with Swagger annotations
+7. MySQL database tables (`SHOW TABLES;` and `DESCRIBE application;`)
+8. Swagger UI main page with grouped tags and schemas
+9. User registration via Swagger (`POST /api/auth/register` returning `201`)
+10. Login and JWT token generation (`POST /api/auth/login`)
+11. Swagger Authorize modal with Bearer token configured
+12. Opportunity CRUD — `GET /api/opportunities` (Paginated list)
+13. Opportunity CRUD — `POST /api/opportunities` (Created `201`)
+14. Opportunity CRUD — `PUT /api/opportunities/{id}` (Updated `200`)
+15. Opportunity CRUD — `DELETE /api/opportunities/{id}` (No Content `204`)
+16. Derived JPA query demonstration (`GET /api/opportunities/location/Chennai`)
+17. Derived JPA query search demonstration (`GET /api/opportunities/search?title=...`)
+18. JPQL query demonstration (`GET /api/opportunities/type/HACKATHON`)
+19. Spring Data Pagination metadata (`page`, `size`, `totalElements`, `totalPages`)
+20. Spring Data Sorting demonstration (`sort=deadline,asc`)
+21. Bean Validation error response (`HTTP 400 Bad Request` with field errors)
+22. Global Exception Handling response (`HTTP 404 Not Found` for nonexistent ID)
+23. Application relationship demonstration (`GET /api/applications/user/1` with foreign keys)
 
 ---
 
-## 11. Team Contributions (4-Member Role Mapping)
+## 10. Academic Evaluation Checklist (All 25 Items Verified)
 
-| Team Member | Domain Responsibility | Key Deliverables |
-| :--- | :--- | :--- |
-| **Member 1** | **Backend & Persistence Core** | JPA Entities (`Candidate`, `Opportunity`, `Application`, `Skill`), Spring Data Repositories, Derived & JPQL Queries, MySQL schema, and Database Constraints. |
-| **Member 2** | **Security & REST API** | Stateless JWT Filter, Spring Security configuration, BCrypt hashing, Jakarta Validation, Global Exception Handling, and Swagger/OpenAPI setup. |
-| **Member 3** | **Job-Fit & Heuristic Engine** | Apache Tika resume parser, Offline Resume Quality Analyzer, Cosine Vector similarity calculations, and Multi-factor Job-Fit algorithm. |
-| **Member 4** | **Frontend, Testing & AI Integration** | React SPA, Dashboard UI, Pipeline tracker, Optional AI review integration, JUnit 5 integration tests, Postman collection, and documentation. |
-
----
-
-## 12. Documentation Index
-
-- [Architecture Overview](file:///c:/Users/sachi/Downloads/Application_management/careerops/docs/architecture.md)
-- [Entity Design & ERD](file:///c:/Users/sachi/Downloads/Application_management/careerops/docs/entity-design.md)
-- [REST API Specification](file:///c:/Users/sachi/Downloads/Application_management/careerops/docs/api.md)
-- [Testing Documentation](file:///c:/Users/sachi/Downloads/Application_management/careerops/docs/testing.md)
-- [Hiring Guidance & Research Paper](file:///c:/Users/sachi/Downloads/Application_management/careerops/docs/research/hiring-guidance.md)
-- [Implementation & Build Log](file:///c:/Users/sachi/Downloads/Application_management/careerops/docs/build-log.md)
+- [x] **1. Complete Layered Architecture**: Controller -> Service -> Repository -> Entity -> MySQL.
+- [x] **2. 4 Primary Entities**: `User`, `Opportunity`, `Application`, `Skill` cleanly mapped with JPA.
+- [x] **3. Complete CRUD Operations**: Implemented across Opportunities, Applications, Skills, and Users.
+- [x] **4. Derived Query Methods**: `findByType`, `findByLocationContainingIgnoreCase`, `findByOrganizationContainingIgnoreCase`, `findByStatus`, etc.
+- [x] **5. Custom JPQL Queries**: `findClosingSoon`, `findActiveByType`, `findApplicationsByUserId`.
+- [x] **6. Pagination**: Supported via Spring Data `Pageable` (`page=0&size=10`).
+- [x] **7. Sorting**: Supported via Spring Data `Sort` (`sort=deadline,asc`).
+- [x] **8. Input Validation**: Jakarta Bean Validation (`@Valid`, `@NotNull`, `@NotBlank`, `@Email`, `@Size`).
+- [x] **9. Global Exception Handling**: `@RestControllerAdvice` producing clean, structured JSON errors.
+- [x] **10. Proper HTTP Status Codes**: `200 OK`, `201 Created`, `204 No Content`, `400 Bad Request`, `401 Unauthorized`, `403 Forbidden`, `404 Not Found`, `409 Conflict`.
+- [x] **11. BCrypt Password Hashing**: Passwords securely encrypted with BCrypt (10 rounds); never stored in plaintext.
+- [x] **12. Stateless JWT Authentication**: Protected endpoints secured via `JwtAuthenticationFilter`.
+- [x] **13. OpenAPI / Swagger 3.0 Documentation**: Interactive docs available at `/swagger-ui.html`.
+- [x] **14. Location & Travel Intelligence**: Haversine distance, Indian transit logistics, and travel necessity badges.
+- [x] **15. Explainable Fit Engine**: Multi-criteria weighted scoring (Skills, Experience, Location, Education).
+- [x] **16. Duplicate Prevention**: Prevents applying twice to the same opportunity (`409 Conflict`).
+- [x] **17. Preserved UI Aesthetics**: Zero regressions — existing frontend styling, tokens, and components 100% intact.
+- [x] **18. Database Integrity**: Relational foreign keys and unique constraints in MySQL.
+- [x] **19. Comprehensive Documentation**: `docs/ENTITY_DESIGN.md`, `docs/API_DOCUMENTATION.md`, `docs/ARCHITECTURE.md`, `docs/TESTING.md`.
+- [x] **20. Automated Test Coverage**: Comprehensive JUnit 5 and SpringBootTest suites passing.

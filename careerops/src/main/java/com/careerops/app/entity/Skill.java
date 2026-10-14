@@ -26,6 +26,13 @@ public class Skill {
         createdAt = LocalDateTime.now();
     }
 
+    public Skill() {}
+
+    public Skill(String name, String category) {
+        this.name = name;
+        this.category = category;
+    }
+
     // --- Getters and Setters ---
 
     public Long getId() { return id; }

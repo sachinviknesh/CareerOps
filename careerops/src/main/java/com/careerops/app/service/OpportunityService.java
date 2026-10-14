@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class OpportunityService {
 
     private static final Logger log = LoggerFactory.getLogger(OpportunityService.class);
@@ -72,6 +73,30 @@ public class OpportunityService {
         LocalDate today = LocalDate.now();
         LocalDate cutoff = today.plusDays(days > 0 ? days : 14);
         return opportunityRepo.findClosingSoon(today, cutoff).stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public List<OpportunityResponse> findByTitle(String title) {
+        return opportunityRepo.findByTitleContainingIgnoreCase(title).stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public List<OpportunityResponse> findByType(OpportunityType type) {
+        return opportunityRepo.findActiveByType(type).stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public List<OpportunityResponse> findByLocation(String location) {
+        return opportunityRepo.findByLocationContainingIgnoreCase(location).stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public List<OpportunityResponse> findByOrganization(String organization) {
+        return opportunityRepo.findByOrganizationContainingIgnoreCase(organization).stream()
                 .map(this::toResponse)
                 .toList();
     }
@@ -139,6 +164,13 @@ public class OpportunityService {
                 .map(s -> new SkillResponse(s.getId(), s.getName(), s.getCategory(), s.getCreatedAt()))
                 .collect(Collectors.toSet());
 
+        String travelBadge = "🔴 Offline — Travel required";
+        if (o.getWorkMode() != null && (o.getWorkMode().toLowerCase().contains("online") || o.getWorkMode().toLowerCase().contains("remote"))) {
+            travelBadge = "🟢 Online — No travel required";
+        } else if (o.getWorkMode() != null && o.getWorkMode().toLowerCase().contains("hybrid")) {
+            travelBadge = "🟡 Hybrid — Travel may be required";
+        }
+
         return new OpportunityResponse(
                 o.getId(),
                 o.getTitle(),
@@ -154,7 +186,23 @@ public class OpportunityService {
                 o.isActive(),
                 skillResponses,
                 o.getCreatedAt(),
-                o.getUpdatedAt()
+                o.getUpdatedAt(),
+                o.getCity(),
+                o.getState(),
+                o.getCountry() != null ? o.getCountry() : "India",
+                o.getVenue(),
+                o.getEligibility(),
+                o.getPreferredSkills(),
+                o.getExperienceRequirement(),
+                o.getEducationRequirement(),
+                o.getRegistrationDeadline(),
+                o.getEventStartDate(),
+                o.getEventEndDate(),
+                o.getSource(),
+                o.getExternalId(),
+                o.getStatus() != null ? o.getStatus() : "OPEN",
+                o.getType() != null ? o.getType().getActionLabel() : "Apply Now",
+                travelBadge
         );
     }
 }

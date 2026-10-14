@@ -9,6 +9,7 @@ export function AppShell({ activePage, onNavigate, user, children }) {
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
+    { id: 'best-matches', label: 'Best Matches', icon: 'auto_awesome' },
     { id: 'opportunities', label: 'Opportunities', icon: 'work' },
     { id: 'applications', label: 'Tracker', icon: 'description' },
     { id: 'profile', label: 'Profile & Skills', icon: 'person' },

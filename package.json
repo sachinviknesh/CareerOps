@@ -4,9 +4,16 @@
   "private": true,
   "description": "CareerOps Full-Stack Workspace",
   "scripts": {
-    "dev": "npm --prefix careerops-ui run dev",
-    "build": "npm --prefix careerops-ui run build",
-    "preview": "npm --prefix careerops-ui run preview",
+    "start": "concurrently -k -n \"backend,frontend\" -c \"cyan,magenta\" \"npm run start:backend\" \"npm run start:frontend\"",
+    "dev": "concurrently -k -n \"backend,frontend\" -c \"cyan,magenta\" \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:backend": "cd careerops && java -jar target/careerops-1.0.0.jar",
+    "start:frontend": "npm --prefix careerops-ui run dev",
+    "build:backend": "cd careerops && mvnw.cmd package -DskipTests",
+    "build:frontend": "npm --prefix careerops-ui run build",
+    "build": "npm run build:backend && npm run build:frontend",
     "install:ui": "npm --prefix careerops-ui install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.4"
   }
 }

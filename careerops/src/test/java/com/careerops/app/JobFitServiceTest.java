@@ -39,7 +39,7 @@ public class JobFitServiceTest {
         Opportunity opportunity = new Opportunity(
                 "Java Software Engineer",
                 "Apex Cloud",
-                OpportunityType.FULL_TIME,
+                OpportunityType.JOB,
                 "Software Engineering",
                 "Looking for a software engineer with 2+ years of experience in Java, Spring Boot, and Docker."
         );
@@ -48,7 +48,7 @@ public class JobFitServiceTest {
         FitResponse fit = jobFitService.analyze(candidate, opportunity);
 
         assertNotNull(fit);
-        assertTrue(fit.matchScore() >= 0 && fit.matchScore() <= 100, "Score should be between 0 and 100");
+        assertTrue(fit.score() >= 0 && fit.score() <= 100, "Score should be between 0 and 100");
         assertNotNull(fit.confidence());
         assertNotNull(fit.disclaimer());
         assertFalse(fit.disclaimer().isEmpty());
@@ -61,6 +61,6 @@ public class JobFitServiceTest {
         assertTrue(fit.missingSkills().stream().anyMatch(s -> s.equalsIgnoreCase("Docker")));
 
         // Check eligibility checks exist
-        assertFalse(fit.eligibility().isEmpty());
+        assertFalse(fit.eligibilityChecks().isEmpty());
     }
 }

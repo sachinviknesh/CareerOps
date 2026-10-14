@@ -16,6 +16,8 @@ export function Dashboard({ onNavigate, onSelectOpportunity }) {
   const [closingSoon, setClosingSoon] = useState([]);
   const [recentApplications, setRecentApplications] = useState([]);
   const [recentOpportunities, setRecentOpportunities] = useState([]);
+  const [topMatches, setTopMatches] = useState([]);
+  const [discoveringJobs, setDiscoveringJobs] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -27,21 +29,35 @@ export function Dashboard({ onNavigate, onSelectOpportunity }) {
     setLoading(true);
     setError(null);
     try {
-      const [statsData, closingData, appsData, oppsData] = await Promise.all([
+      const [statsData, closingData, appsData, oppsData, matchesData] = await Promise.all([
         api.getApplicationStats().catch(() => ({})),
         api.getClosingSoon(14).catch(() => []),
         api.getApplications({ page: 0, size: 5, sort: 'createdAt,desc' }).catch(() => ({ content: [] })),
-        api.getOpportunities({ page: 0, size: 5, sort: 'createdAt,desc' }).catch(() => ({ content: [] }))
+        api.getOpportunities({ page: 0, size: 5, sort: 'createdAt,desc' }).catch(() => ({ content: [] })),
+        api.getTopMatches(5).catch(() => [])
       ]);
 
       if (statsData) setStats(statsData);
       if (closingData) setClosingSoon(closingData);
       if (appsData && appsData.content) setRecentApplications(appsData.content);
       if (oppsData && oppsData.content) setRecentOpportunities(oppsData.content);
+      if (Array.isArray(matchesData)) setTopMatches(matchesData);
     } catch (err) {
       setError('Failed to load dashboard data.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleQuickDiscover = async () => {
+    setDiscoveringJobs(true);
+    try {
+      await api.importJobs({ recalculateMatches: true });
+      await loadDashboardData();
+    } catch (err) {
+      setError(err.message || 'Failed to discover jobs.');
+    } finally {
+      setDiscoveringJobs(false);
     }
   };
 
@@ -113,6 +129,156 @@ export function Dashboard({ onNavigate, onSelectOpportunity }) {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* AUTOMATIC MATCHING SECTION: Your Best Job Matches */}
+      <div style={{
+        backgroundColor: 'var(--bg-surface)',
+        border: '1px solid var(--border-subtle)',
+        borderRadius: 'var(--radius-lg)',
+        padding: 'var(--space-5)',
+        marginBottom: 'var(--space-6)',
+        boxShadow: 'var(--shadow-card)'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+            <span className="material-symbols-outlined" style={{ color: 'var(--accent-primary)', fontSize: '22px' }}>
+              auto_awesome
+            </span>
+            <div>
+              <h3 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>
+                Your Best Job Matches
+              </h3>
+              <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                Top algorithmic fits calculated from candidate profile, technical skills, and resume alignment
+              </span>
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+            {topMatches.length === 0 && (
+              <button
+                className="btn-secondary btn-sm"
+                onClick={handleQuickDiscover}
+                disabled={discoveringJobs}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>
+                  {discoveringJobs ? 'autorenew' : 'sync'}
+                </span>
+                {discoveringJobs ? 'Discovering...' : 'Discover Opportunities'}
+              </button>
+            )}
+            <button
+              className="btn-primary btn-sm"
+              onClick={() => onNavigate('best-matches')}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>list_alt</span>
+              View All Matches
+            </button>
+          </div>
+        </div>
+
+        {topMatches.length === 0 ? (
+          <div style={{ padding: 'var(--space-5)', textAlign: 'center', backgroundColor: 'var(--bg-app)', borderRadius: 'var(--radius-md)' }}>
+            <div style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)', marginBottom: '4px' }}>
+              No automated match scores calculated yet
+            </div>
+            <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: 'var(--space-3)' }}>
+              Discover opportunities from verified feeds to see your custom fit ranking.
+            </div>
+            <button
+              className="btn-primary btn-sm"
+              onClick={handleQuickDiscover}
+              disabled={discoveringJobs}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>bolt</span>
+              Run Automatic Job Matching
+            </button>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-3)' }}>
+            {topMatches.map((m) => {
+              const oppId = m.opportunityId;
+              const badgeClass = m.fitScore >= 80 ? 'badge-success' : m.fitScore >= 60 ? 'badge-warning' : 'badge-neutral';
+              return (
+                <div
+                  key={m.matchId || oppId}
+                  style={{
+                    backgroundColor: 'var(--bg-app)',
+                    border: '1px solid var(--border-subtle)',
+                    borderRadius: 'var(--radius-md)',
+                    padding: 'var(--space-3) var(--space-4)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    gap: 'var(--space-2)',
+                    transition: 'border-color 0.15s ease'
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                      <span className={`mono badge ${badgeClass}`} style={{ fontSize: '12px', fontWeight: 700, padding: '3px 8px' }}>
+                        {m.fitScore}% Match
+                      </span>
+                      <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>
+                        {m.workMode || 'Hybrid'}
+                      </span>
+                    </div>
+
+                    <div
+                      style={{
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        color: 'var(--text-primary)',
+                        cursor: 'pointer',
+                        lineHeight: 1.3
+                      }}
+                      onClick={() => {
+                        if (onSelectOpportunity) onSelectOpportunity(oppId);
+                        onNavigate('opportunityDetail', oppId);
+                      }}
+                      onMouseEnter={(e) => e.target.style.color = 'var(--accent-primary)'}
+                      onMouseLeave={(e) => e.target.style.color = 'var(--text-primary)'}
+                    >
+                      {m.fitScore}% — {m.title}
+                    </div>
+
+                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                      {m.organization || 'Independent Organization'}
+                    </div>
+
+                    {m.matchedSkills && m.matchedSkills.length > 0 && (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px', marginTop: 'var(--space-2)' }}>
+                        {m.matchedSkills.slice(0, 3).map((s, idx) => (
+                          <span key={idx} className="badge badge-success" style={{ fontSize: '10px', padding: '1px 6px' }}>
+                            ✓ {s}
+                          </span>
+                        ))}
+                        {m.matchedSkills.length > 3 && (
+                          <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', alignSelf: 'center' }}>
+                            +{m.matchedSkills.length - 3} more
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: 'var(--space-2)', borderTop: '1px solid var(--border-subtle)', marginTop: 'var(--space-1)' }}>
+                    <button
+                      className="btn-secondary btn-sm"
+                      style={{ fontSize: '11px', padding: '3px 8px' }}
+                      onClick={() => {
+                        if (onSelectOpportunity) onSelectOpportunity(oppId);
+                        onNavigate('opportunityDetail', oppId);
+                      }}
+                    >
+                      Fit & Details →
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Two Column Layout: Deadlines / Recent Applications & Recent Opportunities */}

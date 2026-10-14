@@ -5,6 +5,7 @@ import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
 import { Opportunities } from './pages/Opportunities';
 import { OpportunityDetail } from './pages/OpportunityDetail';
+import { BestMatches } from './pages/BestMatches';
 import { Applications } from './pages/Applications';
 import { Profile } from './pages/Profile';
 import { Resume } from './pages/Resume';
@@ -141,6 +142,9 @@ export function App() {
       )}
       {currentPage === 'opportunities' && (
         <Opportunities onNavigate={navigateTo} onSelectOpportunity={(id) => navigateTo('opportunityDetail', id)} />
+      )}
+      {currentPage === 'best-matches' && (
+        <BestMatches onNavigate={navigateTo} onSelectOpportunity={(id) => navigateTo('opportunityDetail', id)} />
       )}
       {currentPage === 'opportunityDetail' && (
         <OpportunityDetail opportunityId={selectedOpportunityId} onNavigate={navigateTo} />

@@ -8,6 +8,7 @@ import com.careerops.app.entity.Candidate;
 import com.careerops.app.entity.Opportunity;
 import com.careerops.app.entity.OpportunityType;
 import com.careerops.app.exception.BadRequestException;
+import com.careerops.app.exception.ConflictException;
 import com.careerops.app.exception.ResourceNotFoundException;
 import com.careerops.app.repository.ApplicationRepository;
 import com.careerops.app.repository.OpportunityRepository;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@Transactional(readOnly = true)
 public class ApplicationService {
 
     private static final Logger log = LoggerFactory.getLogger(ApplicationService.class);
@@ -31,15 +33,18 @@ public class ApplicationService {
     private final OpportunityRepository opportunityRepo;
     private final CandidateService candidateService;
     private final OpportunityService opportunityService;
+    private final com.careerops.app.repository.UserRepository userRepo;
 
     public ApplicationService(ApplicationRepository applicationRepo,
                               OpportunityRepository opportunityRepo,
                               CandidateService candidateService,
-                              OpportunityService opportunityService) {
+                              OpportunityService opportunityService,
+                              com.careerops.app.repository.UserRepository userRepo) {
         this.applicationRepo = applicationRepo;
         this.opportunityRepo = opportunityRepo;
         this.candidateService = candidateService;
         this.opportunityService = opportunityService;
+        this.userRepo = userRepo;
     }
 
     public Page<ApplicationResponse> findAll(String candidateEmail,
@@ -85,11 +90,12 @@ public class ApplicationService {
         // Section 50: Duplicate application rule
         if (applicationRepo.existsByCandidateIdAndOpportunityId(candidate.getId(), opportunity.getId())) {
             log.warn("Candidate {} already applied/tracked opportunity {}", candidate.getId(), opportunity.getId());
-            throw new BadRequestException("You have already added this opportunity to your tracker.");
+            throw new ConflictException("You have already added this opportunity to your tracker.");
         }
 
         Application app = new Application();
         app.setCandidate(candidate);
+        userRepo.findByEmailIgnoreCase(candidate.getEmail()).ifPresent(app::setUser);
         app.setOpportunity(opportunity);
         app.setStatus(req.status() != null ? req.status() : ApplicationStatus.TO_APPLY);
 
@@ -178,10 +184,30 @@ public class ApplicationService {
         return stats;
     }
 
+    public java.util.List<ApplicationResponse> findByUserId(Long userId) {
+        return applicationRepo.findApplicationsByUserId(userId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    public java.util.List<ApplicationResponse> findByStatus(ApplicationStatus status) {
+        return applicationRepo.findByStatus(status)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
     public ApplicationResponse toResponse(Application a) {
+        Long candidateId = null;
+        if (a.getCandidate() != null) {
+            candidateId = a.getCandidate().getId();
+        } else if (a.getUser() != null) {
+            candidateId = a.getUser().getId();
+        }
         return new ApplicationResponse(
                 a.getId(),
-                a.getCandidate().getId(),
+                candidateId,
                 opportunityService.toResponse(a.getOpportunity()),
                 a.getStatus(),
                 a.getAppliedAt(),

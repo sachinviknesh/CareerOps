@@ -65,7 +65,7 @@ public class OpportunityCrudTest {
         OpportunityRequest createReq = new OpportunityRequest(
                 "Fullstack Developer",
                 "TechCorp",
-                OpportunityType.FULL_TIME,
+                OpportunityType.JOB,
                 "Software Engineering",
                 "Building enterprise cloud applications with Java and React.",
                 "Bengaluru",
@@ -99,7 +99,7 @@ public class OpportunityCrudTest {
         OpportunityRequest updateReq = new OpportunityRequest(
                 "Senior Fullstack Developer",
                 "TechCorp Inc",
-                OpportunityType.FULL_TIME,
+                OpportunityType.JOB,
                 "Software Engineering",
                 "Updated description with lead responsibilities.",
                 "Remote",
@@ -132,7 +132,7 @@ public class OpportunityCrudTest {
         // 5. SEARCH FILTER
         mockMvc.perform(get("/api/opportunities")
                         .param("search", "Senior")
-                        .param("type", "FULL_TIME"))
+                        .param("type", "JOB"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray());
 

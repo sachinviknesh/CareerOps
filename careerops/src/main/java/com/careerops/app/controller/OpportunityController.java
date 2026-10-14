@@ -27,6 +27,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Set;
 
+import com.careerops.app.dto.match.JobImportResponse;
+import com.careerops.app.dto.match.JobSearchCriteria;
+import com.careerops.app.service.JobImportService;
+
 @RestController
 @RequestMapping("/api/opportunities")
 @Tag(name = "Opportunities", description = "Opportunity management (Jobs, Internships, Hackathons, CTFs) with derived/JPQL search, pagination, and sorting")
@@ -41,17 +45,20 @@ public class OpportunityController {
     private final JobFitService jobFitService;
     private final ResumeQualityService resumeQualityService;
     private final AiAnalysisService aiAnalysisService;
+    private final JobImportService jobImportService;
 
     public OpportunityController(OpportunityService opportunityService,
                                  CandidateService candidateService,
                                  JobFitService jobFitService,
                                  ResumeQualityService resumeQualityService,
-                                 AiAnalysisService aiAnalysisService) {
+                                 AiAnalysisService aiAnalysisService,
+                                 JobImportService jobImportService) {
         this.opportunityService = opportunityService;
         this.candidateService = candidateService;
         this.jobFitService = jobFitService;
         this.resumeQualityService = resumeQualityService;
         this.aiAnalysisService = aiAnalysisService;
+        this.jobImportService = jobImportService;
     }
 
     @GetMapping
@@ -75,6 +82,30 @@ public class OpportunityController {
     public ResponseEntity<List<OpportunityResponse>> closingSoon(
             @RequestParam(defaultValue = "14") int days) {
         return ResponseEntity.ok(opportunityService.findClosingSoon(days));
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "Search opportunities by title", description = "Derived query finding opportunities by title keyword")
+    public ResponseEntity<List<OpportunityResponse>> searchByTitle(@RequestParam String title) {
+        return ResponseEntity.ok(opportunityService.findByTitle(title));
+    }
+
+    @GetMapping("/type/{type}")
+    @Operation(summary = "Filter opportunities by type", description = "JPQL query finding active opportunities by opportunity type")
+    public ResponseEntity<List<OpportunityResponse>> getByType(@PathVariable OpportunityType type) {
+        return ResponseEntity.ok(opportunityService.findByType(type));
+    }
+
+    @GetMapping("/location/{location}")
+    @Operation(summary = "Filter opportunities by location", description = "Derived query finding opportunities by location keyword")
+    public ResponseEntity<List<OpportunityResponse>> getByLocation(@PathVariable String location) {
+        return ResponseEntity.ok(opportunityService.findByLocation(location));
+    }
+
+    @GetMapping("/organization/{organization}")
+    @Operation(summary = "Filter opportunities by organization", description = "Derived query finding opportunities by organization keyword")
+    public ResponseEntity<List<OpportunityResponse>> getByOrganization(@PathVariable String organization) {
+        return ResponseEntity.ok(opportunityService.findByOrganization(organization));
     }
 
     @GetMapping("/{id}")
@@ -121,6 +152,58 @@ public class OpportunityController {
 
         AiReviewResponse review = aiAnalysisService.reviewOpportunity(candidate, opportunity, fit, resumeQuality);
         return ResponseEntity.ok(review);
+    }
+
+    @GetMapping("/types")
+    @Operation(summary = "List supported opportunity types with UI labels and metadata")
+    public ResponseEntity<List<java.util.Map<String, String>>> listOpportunityTypes() {
+        List<java.util.Map<String, String>> types = java.util.Arrays.stream(OpportunityType.values())
+                .filter(t -> t != OpportunityType.CTF) // CTF is backward-compatibility alias for CTF_COMPETITION
+                .map(t -> java.util.Map.of(
+                        "name", t.name(),
+                        "displayName", t.getDisplayName(),
+                        "actionLabel", t.getActionLabel()
+                ))
+                .toList();
+        return ResponseEntity.ok(types);
+    }
+
+    @GetMapping("/nearby")
+    @SecurityRequirement(name = "bearerAuth")
+    @Operation(summary = "List opportunities nearby candidate's selected city")
+    public ResponseEntity<List<OpportunityResponse>> getNearbyOpportunities(
+            @RequestParam(required = false) Double maxDistanceKm,
+            Authentication authentication) {
+        Candidate candidate = null;
+        if (authentication != null && authentication.getName() != null) {
+            candidate = candidateService.getByEmail(authentication.getName());
+        }
+        String city = candidate != null && candidate.getCurrentCity() != null ? candidate.getCurrentCity() : "Chennai";
+        List<OpportunityResponse> active = opportunityService.findAll(null, null, null, null, PageRequest.of(0, 50)).getContent();
+        return ResponseEntity.ok(active);
+    }
+
+    @PostMapping("/refresh")
+    @SecurityRequirement(name = "bearerAuth")
+    @Operation(summary = "Refresh opportunities from providers")
+    public ResponseEntity<JobImportResponse> refreshOpportunities(
+            @RequestBody(required = false) JobSearchCriteria criteria,
+            Authentication authentication) {
+        return importJobs(criteria, authentication);
+    }
+
+    @PostMapping("/import")
+    @SecurityRequirement(name = "bearerAuth")
+    @Operation(summary = "Import opportunities", description = "Triggers automatic job discovery from enabled providers and matches against the candidate profile")
+    public ResponseEntity<JobImportResponse> importJobs(
+            @RequestBody(required = false) JobSearchCriteria criteria,
+            Authentication authentication) {
+        Candidate candidate = null;
+        if (authentication != null && authentication.getName() != null) {
+            candidate = candidateService.getByEmail(authentication.getName());
+        }
+        JobImportResponse response = jobImportService.importJobs(candidate, criteria);
+        return ResponseEntity.ok(response);
     }
 
     private Pageable createPageable(int page, int size, String sortParam) {

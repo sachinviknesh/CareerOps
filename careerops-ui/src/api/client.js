@@ -20,16 +20,21 @@ export async function apiRequest(endpoint, options = {}) {
     headers['Content-Type'] = 'application/json';
   }
 
-  const response = await fetch(url, {
-    ...options,
-    headers
-  });
+  let response;
+  try {
+    response = await fetch(url, {
+      ...options,
+      headers
+    });
+  } catch (netErr) {
+    const error = new Error('Cannot connect to backend server. Please verify the Spring Boot service is running on port 8080.');
+    error.status = 503;
+    throw error;
+  }
 
-  if (response.status === 401) {
+  if (response.status === 401 && !endpoint.startsWith('/api/auth/')) {
     tokenStorage.clear();
-    if (!window.location.pathname.startsWith('/login') && !window.location.pathname.startsWith('/register')) {
-      window.location.href = '/login';
-    }
+    window.location.hash = 'login';
   }
 
   if (response.status === 204) {
@@ -38,19 +43,48 @@ export async function apiRequest(endpoint, options = {}) {
 
   const contentType = response.headers.get('content-type') || '';
   let data;
-  if (contentType.includes('application/json')) {
-    data = await response.json();
-  } else {
-    data = await response.text();
+  try {
+    if (contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
+      data = await response.text();
+    }
+  } catch (parseErr) {
+    data = null;
   }
 
   if (!response.ok) {
-    const errorMsg = (data && typeof data === 'object' && (data.message || data.error))
-      ? (data.message || data.error)
-      : (typeof data === 'string' && data ? data : `Request failed with status ${response.status}`);
+    let errorMsg = `Request failed with status ${response.status}`;
+    let fieldErrors = null;
+
+    if (data && typeof data === 'object') {
+      if (data.message) {
+        errorMsg = data.message;
+      } else if (data.error) {
+        errorMsg = data.error;
+      }
+      if (data.fieldErrors) {
+        fieldErrors = data.fieldErrors;
+      }
+    } else if (typeof data === 'string' && (
+      data.includes('ECONNREFUSED') || 
+      data.includes('Proxy error') || 
+      data.includes('Bad Gateway') || 
+      data.includes('Service Unavailable') || 
+      data.includes('<!DOCTYPE') || 
+      data.includes('<html')
+    )) {
+      errorMsg = 'Cannot connect to backend server. Please verify the Spring Boot service is running on port 8080.';
+    } else if (response.status === 502 || response.status === 503 || response.status === 504 || (response.status === 500 && !data)) {
+      errorMsg = 'Cannot connect to backend server. Please verify the Spring Boot service is running on port 8080.';
+    } else if (response.status === 500) {
+      errorMsg = 'Backend service is starting or unavailable. Please ensure Spring Boot is running on port 8080.';
+    }
+
     const error = new Error(errorMsg);
     error.status = response.status;
     error.data = data;
+    error.fieldErrors = fieldErrors;
     throw error;
   }
 
@@ -138,5 +172,30 @@ export const api = {
   }),
   deleteApplication: (id) => apiRequest(`/api/applications/${id}`, {
     method: 'DELETE'
-  })
+  }),
+
+  // Job Discovery & Automated Matching
+  getMatches: (params = {}) => {
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([k, v]) => {
+      if (v !== undefined && v !== null && v !== '') query.append(k, v);
+    });
+    const qs = query.toString();
+    return apiRequest(`/api/matches${qs ? `?${qs}` : ''}`);
+  },
+  getTopMatches: (limit = 5) => apiRequest(`/api/matches/top?limit=${limit}`),
+  getMatch: (opportunityId) => apiRequest(`/api/matches/${opportunityId}`),
+  recalculateMatches: () => apiRequest('/api/matches/recalculate', {
+    method: 'POST'
+  }),
+  importJobs: (params = {}) => {
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([k, v]) => {
+      if (v !== undefined && v !== null && v !== '') query.append(k, v);
+    });
+    const qs = query.toString();
+    return apiRequest(`/api/opportunities/import${qs ? `?${qs}` : ''}`, {
+      method: 'POST'
+    });
+  }
 };

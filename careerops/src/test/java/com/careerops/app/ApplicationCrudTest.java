@@ -66,7 +66,7 @@ public class ApplicationCrudTest {
         savedOpp = new Opportunity(
                 "Data Engineer",
                 "DataFlow Inc",
-                OpportunityType.FULL_TIME,
+                OpportunityType.JOB,
                 "Data Engineering",
                 "Pipeline architecture and SQL data warehousing."
         );

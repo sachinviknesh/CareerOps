@@ -1,6 +1,15 @@
 import React from 'react';
 
-export function FitPanel({ fitData, loading = false, error = null, onAiReview = null, aiLoading = false, aiReview = null }) {
+export function FitPanel({
+  fitData,
+  loading = false,
+  error = null,
+  onAiReview = null,
+  aiLoading = false,
+  aiReview = null,
+  aiError = null,
+  onDismissAiError = null
+}) {
   if (loading) {
     return (
       <div style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--text-secondary)' }}>
@@ -89,6 +98,40 @@ export function FitPanel({ fitData, loading = false, error = null, onAiReview = 
           </button>
         )}
       </div>
+
+      {/* AI Feature Status Notice */}
+      {aiError && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: 'var(--space-3)',
+          padding: 'var(--space-3) var(--space-4)',
+          backgroundColor: 'var(--bg-surface-subtle)',
+          border: '1px solid var(--border-subtle)',
+          borderRadius: 'var(--radius-md)',
+          fontSize: '12px',
+          color: 'var(--text-secondary)'
+        }}>
+          <span className="material-symbols-outlined" style={{ fontSize: '18px', color: 'var(--accent-primary)', flexShrink: 0 }}>
+            info
+          </span>
+          <div style={{ flex: 1, lineHeight: 1.5 }}>
+            <strong style={{ color: 'var(--text-primary)' }}>Optional AI Feature:</strong> {aiError}
+            <div style={{ marginTop: '4px', fontSize: '11px', color: 'var(--text-tertiary)' }}>
+              The <strong>Candidate Fit Engine</strong> above already runs 100% offline with heuristic calculations. To enable LLM enhancements, configure <code>AI_ENABLED=true</code>, <code>AI_BASE_URL</code>, and <code>AI_API_KEY</code>.
+            </div>
+          </div>
+          {onDismissAiError && (
+            <button
+              onClick={onDismissAiError}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, color: 'var(--text-tertiary)' }}
+              title="Dismiss"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>close</span>
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Mandatory Disclaimer */}
       {disclaimer && (

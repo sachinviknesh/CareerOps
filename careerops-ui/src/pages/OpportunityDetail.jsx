@@ -15,6 +15,7 @@ export function OpportunityDetail({ opportunityId, onNavigate }) {
 
   const [aiReview, setAiReview] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState(null);
 
   // Tracking state
   const [trackingLoading, setTrackingLoading] = useState(false);
@@ -56,11 +57,12 @@ export function OpportunityDetail({ opportunityId, onNavigate }) {
 
   const handleAiReview = async () => {
     setAiLoading(true);
+    setAiError(null);
     try {
       const review = await api.getAiReview(opportunityId);
       setAiReview(review);
     } catch (err) {
-      alert(err.message || 'AI review failed or is disabled in configuration.');
+      setAiError(err.message || 'AI feature is optional and currently disabled in configuration (AI_ENABLED=false).');
     } finally {
       setAiLoading(false);
     }
@@ -275,6 +277,8 @@ export function OpportunityDetail({ opportunityId, onNavigate }) {
             onAiReview={handleAiReview}
             aiLoading={aiLoading}
             aiReview={aiReview}
+            aiError={aiError}
+            onDismissAiError={() => setAiError(null)}
           />
         </div>
       </div>

@@ -14,8 +14,23 @@ yarn-error.log*
 
 # Environment & Secrets
 .env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
 .env.local
 *.secret
+*.pem
+*.key
+*.pkcs12
+*.pfx
+*.p12
+id_rsa*
+id_ed25519*
+*credentials*.json
+*service-account*.json
+client_secret*.json
 
 # IDE & OS
 .idea/
@@ -24,3 +39,6 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 *.log
+.tools/
+careerops/data/
+*.mv.db

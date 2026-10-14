@@ -66,6 +66,18 @@ public class ApplicationController {
         return ResponseEntity.ok(applicationService.findById(authentication.getName(), id));
     }
 
+    @GetMapping("/user/{userId}")
+    @Operation(summary = "Find applications by user ID (JPQL Query)", description = "Demonstrates JPQL query: SELECT a FROM Application a WHERE a.user.id = :userId")
+    public ResponseEntity<java.util.List<ApplicationResponse>> getByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(applicationService.findByUserId(userId));
+    }
+
+    @GetMapping("/status/{status}")
+    @Operation(summary = "Find applications by status (Derived Query)", description = "Demonstrates JPA derived query: findByStatus")
+    public ResponseEntity<java.util.List<ApplicationResponse>> getByStatus(@PathVariable ApplicationStatus status) {
+        return ResponseEntity.ok(applicationService.findByStatus(status));
+    }
+
     @PostMapping
     @Operation(summary = "Create/track application", description = "Adds an opportunity to the candidate's tracker with status (TO_APPLY, APPLIED, etc.) preventing duplicates")
     public ResponseEntity<ApplicationResponse> create(Authentication authentication,
